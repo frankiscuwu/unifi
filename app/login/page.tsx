@@ -8,7 +8,8 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
 
   const handleSpotifyLogin = () => {
-    signIn()
+    // Directly start the Spotify OAuth flow. This bypasses NextAuth's default sign-in page.
+    signIn('spotify', { callbackUrl: '/home' });
   };
 
   return (

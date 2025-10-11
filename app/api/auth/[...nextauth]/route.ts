@@ -10,6 +10,10 @@ export const authOptions: AuthOptions = {
         'https://accounts.spotify.com/authorize?scope=user-read-email,user-modify-playback-state,user-read-playback-state',
     }),
   ],
+  // Use our custom login page instead of NextAuth's default provider list
+  pages: {
+    signIn: '/login',
+  },
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async jwt({ token, account }) {
