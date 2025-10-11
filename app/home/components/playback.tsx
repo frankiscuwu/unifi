@@ -8,6 +8,7 @@ export default function Playback() {
     useEffect(() => {
         setTrack(current as any);
     }, [current]);
+    
     return (
         <div className="w-full max-w-xl mx-auto bg-neutral-900 text-white p-4 rounded-2xl shadow-lg flex flex-col gap-4">
             {/* Top Section: Track Info */}

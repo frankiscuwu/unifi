@@ -1,6 +1,13 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, {
+    useEffect,
+    createContext,
+    useContext,
+    useState,
+    useCallback,
+} from "react";
+import { useSession } from "next-auth/react";
 
 export interface Track {
     id?: string | number;
@@ -26,7 +33,57 @@ interface PlayerContextValue {
 const PlayerContext = createContext<PlayerContextValue | undefined>(undefined);
 
 export function PlayerProvider({ children }: { children: React.ReactNode }) {
+    const { data: session } = useSession();
+
     const [player, setPlayer] = useState<any>(null);
+
+    useEffect(() => {
+        if (!session) return;
+
+        const script = document.createElement("script");
+        script.src = "https://sdk.scdn.co/spotify-player.js";
+        script.async = true;
+        document.body.appendChild(script);
+
+        window.onSpotifyWebPlaybackSDKReady = () => {
+            const spotifyPlayer = new window.Spotify.Player({
+                name: "Web Playback SDK Quick Start Player",
+                getOAuthToken: (cb: (token: string) => void) => {
+                    if (session?.accessToken) {
+                        cb(session.accessToken);
+                    } else {
+                        console.error(
+                            "No Spotify access token found in session"
+                        );
+                    }
+                },
+                volume: 0.5,
+            });
+
+            spotifyPlayer.addListener("ready", async ({ device_id }: any) => {
+                console.log("Spotify Player Ready with Device ID", device_id);
+                const response = await fetch("/api/add_queue/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ device_id }),
+                });
+                console.log("Add to queue response:", response);
+            });
+
+            spotifyPlayer.addListener("not_ready", ({ device_id }: any) => {
+                console.log("Device ID has gone offline", device_id);
+            });
+
+            spotifyPlayer.connect();
+
+            // Set state AFTER listeners are attached
+            setPlayer(spotifyPlayer);
+        };
+
+        return () => {
+            document.body.removeChild(script);
+        };
+    }, [session]);
 
     const [queue, setQueue] = useState<Track[]>([
         {
