@@ -22,6 +22,7 @@ export default function Player() {
     const { data: session } = useSession();
 
     useEffect(() => {
+        console.log("JODI SUCKS", session)
         // Load the SDK script dynamically
         const script = document.createElement("script");
         script.src = "https://sdk.scdn.co/spotify-player.js";
@@ -32,11 +33,18 @@ export default function Player() {
         window.onSpotifyWebPlaybackSDKReady = () => {
             const player = new window.Spotify.Player({
                 name: "Web Playback SDK Quick Start Player",
-                getOAuthToken: session?.accessToken,
+                getOAuthToken: (cb: (token: string) => void) => {
+                    if (session?.accessToken) {
+                        cb(session.accessToken);
+                    } else {
+                        console.error(
+                            "No Spotify access token found in session"
+                        );
+                    }
+                },
                 volume: 0.5,
             });
 
-            // Connect to the player
             player.addListener("ready", ({ device_id }: any) => {
                 console.log("Ready with Device ID", device_id);
             });
