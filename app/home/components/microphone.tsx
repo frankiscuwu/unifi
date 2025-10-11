@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Loader2, Mic, Square } from "lucide-react";
+import { sendAudioToGemini } from "../lib/voice";
 
 export default function Microphone() {
   const [isRecording, setIsRecording] = useState(false);
@@ -21,12 +22,16 @@ export default function Microphone() {
       mr.onstop = async () => {
         setIsProcessing(true);
         const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
-        console.log(blob)
-        // TODO: send `blob` to backend for Gemini transcription/intent
-        // Placeholder: simulate processing
-        setTimeout(() => {
+        console.log("BEFORE API CALL TO GEMINI:", blob)
+        try {
+          const { text } = await sendAudioToGemini(blob);
+          // For now, just log. Later, emit an event or update shared state.
+          console.log("GEMINI TEXT GOT BACK:", text);
+        } catch (e) {
+          console.error("VOICE API ERROR FROM AWAIT:", e);
+        } finally {
           setIsProcessing(false);
-        }, 1000);
+        }
       };
       mr.start();
       setIsRecording(true);
