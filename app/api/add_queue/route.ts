@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     const response = await fetch(
       `https://api.spotify.com/v1/me/player/play?device_id=${device_id}`,
       {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           Authorization: `Bearer ${session.accessToken}`,
         },
