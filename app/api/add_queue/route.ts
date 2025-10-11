@@ -11,20 +11,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
+     console.log("test")
+
     // Parse track URI from request body
-    const { uri } = await req.json();
-    if (!uri) {
-      return NextResponse.json({ error: 'No track URI provided' }, { status: 400 });
+    const { uri, device_id } = await req.json();
+    if (!uri || !device_id) {
+      return NextResponse.json({ error: 'No track URI or device ID provided' }, { status: 400 });
     }
+
+    
 
     // Call Spotify API to add track to queue
     const response = await fetch(
-      `https://api.spotify.com/v1/me/player/queue?uri=${encodeURIComponent(uri)}`,
+      `https://api.spotify.com/v1/me/player/play?device_id=${device_id}`,
       {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${session.accessToken}`,
         },
+        body: JSON.stringify({
+            uris: [uri]
+        })
       }
     );
 
