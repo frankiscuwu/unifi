@@ -2,15 +2,13 @@
 
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
+import { useSession, signIn, signOut } from "next-auth/react"
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
 
   const handleSpotifyLogin = () => {
-    // Clear any existing errors
-    setError(null);
-    // This will redirect to our Spotify auth endpoint
-    window.location.href = "/api/auth/spotify";
+    signIn()
   };
 
   return (
