@@ -10,11 +10,21 @@ import React, {
 import { useSession } from "next-auth/react";
 
 export interface Track {
-    id?: string | number;
-    title: string;
-    artist?: string;
-    albumArtUrl?: string;
-    duration?: number | string; // seconds or formatted
+    timestamp: number; // epoch time, when request returned
+    progress_ms: number; // progress into the current track in ms
+    is_playing: boolean;
+    item: {
+        id: string;
+        name: string;
+        album: {
+            images: { url: string }[];
+            uri: string;
+            name: string;
+        };
+        artists: { name: string }[];
+        duration_ms: number;
+        uri: string;
+    };
 }
 
 interface PlayerContextValue {
@@ -37,6 +47,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
     const [player, setPlayer] = useState<any>(null);
 
+    const [deviceReady, setDeviceReady] = useState(false);
+
     useEffect(() => {
         if (!session) return;
 
@@ -49,33 +61,23 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
             const spotifyPlayer = new window.Spotify.Player({
                 name: "Web Playback SDK Quick Start Player",
                 getOAuthToken: (cb: (token: string) => void) => {
-                    if (session?.accessToken) {
-                        cb(session.accessToken);
-                    } else {
-                        console.error(
-                            "No Spotify access token found in session"
-                        );
-                    }
+                    if (session?.accessToken) cb(session.accessToken);
                 },
                 volume: 0.5,
             });
 
             spotifyPlayer.addListener("ready", async ({ device_id }: any) => {
                 console.log("Spotify Player Ready with Device ID", device_id);
-                const response = await fetch("/api/add_queue/", {
+                await fetch("/api/add_queue/", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ device_id }),
                 });
-            });
 
-            spotifyPlayer.addListener("not_ready", ({ device_id }: any) => {
-                console.log("Device ID has gone offline", device_id);
+                setDeviceReady(true); // now we can start fetching state
             });
 
             spotifyPlayer.connect();
-
-            // Set state AFTER listeners are attached
             setPlayer(spotifyPlayer);
         };
 
@@ -84,52 +86,51 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         };
     }, [session]);
 
-    const [queue, setQueue] = useState<Track[]>([
-        {
-            id: 1,
-            title: "As It Was",
-            artist: "Harry Styles",
-            albumArtUrl:
-                "https://i.scdn.co/image/ab67616d0000b273a0fbbdb6a9b8e49758f0f9c8",
-            duration: "3:21",
-        },
-    ]);
-    const [current, setCurrent] = useState<Track | null>(queue[0] ?? null);
+    const [queue, setQueue] = useState<Track[]>([]);
+    const [current, setCurrent] = useState<Track | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
 
     useEffect(() => {
-        if (!player) return;
+        if (!deviceReady) return; // wait for device to be ready
 
-        const handleStateChange = (state: any) => {
-            if (!state) return;
-            const currentTrack = state.track_window.current_track;
+        const fetchState = async () => {
+            const res = await fetch("/api/player_state");
+            const state = await res.json();
+            setCurrent(state);
+            setProgress(state.progress_ms);
+        };
 
-            setCurrent({
-                id: currentTrack.id,
-                title: currentTrack.name,
-                artist: currentTrack.artists?.[0]?.name,
-                albumArtUrl: currentTrack.album?.images?.[0]?.url,
-                duration: currentTrack.duration_ms / 1000,
+        // Call immediately
+        fetchState();
+
+        const interval = setInterval(fetchState, 10000);
+        return () => clearInterval(interval);
+    }, [deviceReady]);
+
+    const [progress, setProgress] = useState(0); // ms into track
+
+    // Update progress locally every 500ms
+    useEffect(() => {
+        if (!current || !isPlaying) return;
+
+        // Start interval
+        const interval = setInterval(() => {
+            setProgress((prev) => {
+                const next = prev + 500;
+                return next > current.item.duration_ms
+                    ? current.item.duration_ms
+                    : next;
             });
+        }, 500);
 
-            setIsPlaying(!state.paused);
-        };
-
-        player.addListener("player_state_changed", handleStateChange);
-
-        // Cleanup on unmount
-        return () => {
-            player.removeListener("player_state_changed", handleStateChange);
-        };
-    }, [player]);
+        return () => clearInterval(interval);
+    }, [current, isPlaying]);
 
     const play = useCallback((track?: Track) => {
         if (track) {
             setCurrent(track);
             // If not in queue, add it
-            setQueue((q) =>
-                q.find((t) => t.id === track.id) ? q : [...q, track]
-            );
+            // queue logic here
         }
         setIsPlaying(true);
     }, []);
@@ -142,8 +143,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
     const removeFromQueue = useCallback((id?: string | number) => {
         if (id === undefined) return;
-        setQueue((q) => q.filter((t) => t.id !== id));
-        setCurrent((c) => (c && c.id === id ? null : c));
+        // logic here
     }, []);
 
     const skip = useCallback(() => {

@@ -1,32 +1,37 @@
 import { useEffect, useState } from "react";
 import { usePlayer } from "../providers/playerContext";
 
+function formatTime(ms: number) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
 export default function Playback() {
     const { current, isPlaying, play, pause } = usePlayer();
-    const [track, setTrack] = useState(current);
 
-    useEffect(() => {
-        setTrack(current as any);
-    }, [current]);
-    
     return (
+        
         <div className="w-full max-w-xl mx-auto bg-neutral-900 text-white p-4 rounded-2xl shadow-lg flex flex-col gap-4">
             {/* Top Section: Track Info */}
 
             <div className="flex flex-col align-center items-center gap-2">
                 <img
                     src={
-                        track?.albumArtUrl ||
+                        current?.item?.album.images[0].url ||
                         "https://media.pitchfork.com/photos/623b686c6597466fa9d6e32d/master/pass/Harry-Styles-Harrys-House.jpeg"
                     }
                     alt="Album Art"
                     className="w-16 h-16 rounded-lg shadow-md"
                 />
                 <span className="text-sm font-semibold">
-                    {track?.title || "NOTHING"}
+                    {current?.item?.name || "NOTHING"}
                 </span>
                 <span className="text-xs text-gray-400">
-                    {track?.artist || "NOTHING"}
+                    {current?.item?.artists
+                        .map((artist) => artist.name)
+                        .join(", ") || "NOTHING"}
                 </span>
             </div>
 
@@ -70,11 +75,37 @@ export default function Playback() {
 
                 {/* Progress Bar */}
                 <div className="flex items-center gap-2 w-full text-xs text-gray-400">
-                    <span>1:12</span>
+                    <span>
+                        {current?.progress_ms
+                            ? formatTime(current?.progress_ms)
+                            : "0:00"}
+                    </span>
                     <div className="flex-1 h-1 bg-gray-700 rounded-full overflow-hidden">
-                        <div className="h-full bg-green-500 w-[40%]" />
+                        <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={
+                                current?.item
+                                    ? Math.min(
+                                          100,
+                                          Math.floor(
+                                              ((current?.progress_ms || 0) /
+                                                  current?.item?.duration_ms) *
+                                                  100
+                                          )
+                                      )
+                                    : 0
+                            }
+                            className="h-full bg-green-500"
+                            readOnly
+                        />
                     </div>
-                    <span>3:21</span>
+                    <span>
+                        {current?.item?.duration_ms
+                            ? formatTime(Number(current.item.duration_ms))
+                            : "0:00"}
+                    </span>
                 </div>
             </div>
 
