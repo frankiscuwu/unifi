@@ -1,44 +1,58 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Playback from "./components/playback";
 import Agent from "./components/agent";
 import Queue from "./components/queue";
 import Chat from "./components/chat";
+import { useSession } from "next-auth/react";
+
+declare global {
+    interface Window {
+        onSpotifyWebPlaybackSDKReady?: () => void;
+        Spotify?: any;
+    }
+}
 
 export default function Player() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
 
-    // Example URI - replace with dynamic data if available
-    const exampleUri = "spotify:track:7sO5G9EABYOXQKNPNiE9NR";
+    const { data: session } = useSession();
 
-    const addToQueue = async (uri: string) => {
-        setError(null);
-        setSuccess(false);
-        setLoading(true);
-        try {
-            const res = await fetch("/api/add_queue", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ uri }),
+    useEffect(() => {
+        // Load the SDK script dynamically
+        const script = document.createElement("script");
+        script.src = "https://sdk.scdn.co/spotify-player.js";
+        script.async = true;
+        document.body.appendChild(script);
+
+        // Wait for SDK to be ready
+        window.onSpotifyWebPlaybackSDKReady = () => {
+            const player = new window.Spotify.Player({
+                name: "Web Playback SDK Quick Start Player",
+                getOAuthToken: session?.accessToken,
+                volume: 0.5,
             });
 
-            if (!res.ok) {
-                const data = await res.json().catch(() => ({}));
-                throw new Error(
-                    data?.error || `Request failed with ${res.status}`
-                );
-            }
+            // Connect to the player
+            player.addListener("ready", ({ device_id }: any) => {
+                console.log("Ready with Device ID", device_id);
+            });
 
-            setSuccess(true);
-        } catch (err: any) {
-            setError(err?.message || "Unknown error");
-        } finally {
-            setLoading(false);
-        }
-    };
+            player.addListener("not_ready", ({ device_id }: any) => {
+                console.log("Device ID has gone offline", device_id);
+            });
+
+            player.connect();
+        };
+
+        return () => {
+            // Cleanup script when component unmounts
+            document.body.removeChild(script);
+        };
+    }, []);
 
     return (
         <div className="flex-rows md:flex gap-1 items-center">
@@ -46,27 +60,6 @@ export default function Player() {
             <div className="min-h-screen p-8 flex flex-col gap-12">
                 <div className="flex items-center justify-center gap-4">
                     <Playback />
-                    <div className="flex flex-col items-start gap-2">
-                        <button
-                            onClick={() => addToQueue(exampleUri)}
-                            disabled={loading}
-                            className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white px-4 py-2 rounded-md"
-                        >
-                            {loading
-                                ? "Adding..."
-                                : "Add example track to queue"}
-                        </button>
-                        {error && (
-                            <div className="text-sm text-red-400">
-                                Error: {error}
-                            </div>
-                        )}
-                        {success && (
-                            <div className="text-sm text-green-400">
-                                Added to queue ✓
-                            </div>
-                        )}
-                    </div>
                 </div>
 
                 <Agent />
