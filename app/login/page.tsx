@@ -1,31 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
-  const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const errorParam = searchParams.get('error');
-    if (errorParam) {
-      switch (errorParam) {
-        case 'access_denied':
-          setError('Access was denied. Please try again.');
-          break;
-        case 'no_code':
-          setError('No authorization code received. Please try again.');
-          break;
-        case 'auth_failed':
-          setError('Authentication failed. Please try again.');
-          break;
-        default:
-          setError('An error occurred during authentication.');
-      }
-    }
-  }, [searchParams]);
 
   const handleSpotifyLogin = () => {
     // Clear any existing errors

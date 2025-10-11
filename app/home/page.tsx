@@ -1,23 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 
 export default function HomePage() {
-  const searchParams = useSearchParams();
   const [user, setUser] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    const authenticated = searchParams.get('authenticated');
-    const userName = searchParams.get('user');
-    
-    if (authenticated === 'true') {
-      setIsAuthenticated(true);
-      setUser(userName);
-    }
-  }, [searchParams]);
 
   const handleLogout = () => {
     setIsAuthenticated(false);
@@ -70,7 +58,7 @@ export default function HomePage() {
           {isAuthenticated ? (
             <div className="space-y-6">
               <p className="text-xl text-muted-foreground">
-                Great! You're connected to Spotify.
+                Great! You&apos;re connected to Spotify.
               </p>
               <div className="max-w-2xl mx-auto p-6 bg-card border border-border rounded-lg">
                 <h3 className="text-lg font-semibold text-card-foreground mb-2">
