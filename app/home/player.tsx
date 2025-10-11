@@ -7,6 +7,7 @@ import Queue from "./components/queue";
 import Chat from "./components/chat";
 import { PlayerProvider } from "./providers/playerContext";
 import { ModeToggle } from "@/components/ui/mode-toggle";
+import Microphone from "./components/microphone";
 
 declare global {
     interface Window {
@@ -24,13 +25,15 @@ export default function Player() {
                     <div className="flex items-center justify-center gap-4">
                         <Playback />
                     </div>
-
-                    <Agent />
+                    <div className="flex items-center justify-center gap-4 mt-auto">
+                        <Agent />
+                    </div>
                 </div>
                 <Queue />
                 <div className="fixed bottom-4 left-4 z-50 md:bottom-6 md:left-6">
                     <ModeToggle />
                 </div>
+                <Microphone />
             </div>
         </PlayerProvider>
     );

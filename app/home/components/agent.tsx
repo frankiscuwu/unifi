@@ -1,4 +1,7 @@
-import { useState } from "react";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { Mic, Square, Loader2 } from "lucide-react";
 
 export default function Agent() {
   const [messages, setMessages] = useState([
@@ -26,16 +29,17 @@ export default function Agent() {
     }, 800);
   };
 
+
   return (
-    <div className="flex flex-col h-[600px] w-full max-w-md mx-auto bg-neutral-900 text-white rounded-2xl shadow-xl overflow-hidden">
+    <div className="relative flex flex-col h-[200px] w-full max-w-3xl mx-auto bg-neutral-900/80 backdrop-blur text-white rounded-xl shadow-xl overflow-hidden ring-1 ring-neutral-800">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-neutral-800 flex items-center justify-between">
-        <h2 className="font-semibold text-lg">AI Agent</h2>
-        <span className="text-xs text-gray-400">Powered by GPT-5</span>
+      <div className="px-3 py-2 border-b border-neutral-800/80 flex items-center justify-between">
+        <h2 className="font-medium text-xs tracking-wide uppercase text-neutral-300">AI Agent</h2>
+        <span className="text-[10px] text-neutral-500">Gemini-ready</span>
       </div>
 
       {/* Message History */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-2 space-y-1">
         {messages.map((m, i) => (
           <div
             key={i}
@@ -44,10 +48,10 @@ export default function Agent() {
             }`}
           >
             <div
-              className={`max-w-[75%] px-4 py-2 rounded-2xl text-sm ${
+              className={`max-w-[70%] px-2.5 py-1.5 rounded-2xl text-[12px] leading-relaxed ${
                 m.role === "user"
-                  ? "bg-green-600 text-white"
-                  : "bg-neutral-800 text-gray-200"
+                  ? "bg-green-600 text-white shadow-sm"
+                  : "bg-neutral-800/80 text-gray-200 ring-1 ring-neutral-800"
               }`}
             >
               {m.content}
@@ -57,22 +61,24 @@ export default function Agent() {
       </div>
 
       {/* Input Area */}
-      <div className="p-3 border-t border-neutral-800 flex items-center gap-2">
+      <div className="p-2 border-t border-neutral-800/80 flex items-center gap-2">
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
-          placeholder="Ask me anything..."
-          className="flex-1 bg-neutral-800 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+          placeholder="Type a prompt..."
+          className="flex-1 bg-neutral-800/80 text-white rounded-md px-2.5 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-green-500"
         />
         <button
           onClick={handleSend}
-          className="bg-green-600 hover:bg-green-500 transition rounded-lg px-3 py-2 text-sm font-medium"
+          className="bg-green-600 hover:bg-green-500 transition rounded-md px-3 py-1.5 text-xs font-medium"
         >
           Send
         </button>
       </div>
+
+      {/* Mic removed: now a separate component (Microphone) */}
     </div>
   );
 }

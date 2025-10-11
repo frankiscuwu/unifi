@@ -28,15 +28,15 @@ export default function Chat() {
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-[600px] w-full max-w-md mx-auto bg-neutral-900 text-white rounded-2xl shadow-lg overflow-hidden">
+    <div className="flex flex-col h-[420px] w-full max-w-sm mx-auto bg-neutral-900/80 backdrop-blur text-white rounded-2xl shadow-xl overflow-hidden ring-1 ring-neutral-800">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-neutral-800 flex items-center justify-between">
-        <h2 className="font-semibold text-lg">Chat</h2>
-        <span className="text-xs text-gray-400">Now online 🟢</span>
+      <div className="px-4 py-3 border-b border-neutral-800/80 flex items-center justify-between">
+        <h2 className="font-semibold text-sm tracking-wide uppercase text-neutral-300">Chat</h2>
+        <span className="text-xs text-neutral-500">Now online 🟢</span>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-2">
         {messages.map((msg) => (
           <div
             key={msg.id}
@@ -45,10 +45,10 @@ export default function Chat() {
             }`}
           >
             <div
-              className={`max-w-[75%] px-4 py-2 rounded-2xl text-sm ${
+              className={`max-w-[75%] px-3 py-2 rounded-2xl text-[13px] leading-relaxed ${
                 msg.sender === "user"
-                  ? "bg-green-600 text-white"
-                  : "bg-neutral-800 text-gray-200"
+                  ? "bg-green-600 text-white shadow-sm"
+                  : "bg-neutral-800/80 text-gray-200 ring-1 ring-neutral-800"
               }`}
             >
               {msg.content}
@@ -59,14 +59,14 @@ export default function Chat() {
       </div>
 
       {/* Input Bar */}
-      <div className="p-3 border-t border-neutral-800 flex items-center gap-2">
+      <div className="p-3 border-t border-neutral-800/80 flex items-center gap-2">
         <input
           type="text"
           placeholder="Type a message..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
-          className="flex-1 bg-neutral-800 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+          className="flex-1 bg-neutral-800/80 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
         />
         <button
           onClick={handleSend}
