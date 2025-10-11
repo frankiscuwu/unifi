@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { useSession, signIn, signOut } from "next-auth/react"
+import { ModeToggle } from "@/components/ui/mode-toggle"
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +34,7 @@ export default function LoginPage() {
         <div className="mt-8 space-y-6">
           <Button 
             onClick={handleSpotifyLogin}
-            className="w-full flex items-center justify-center gap-3 bg-[#1DB954] hover:bg-[#1ed760] text-white font-medium py-3 px-4 rounded-lg transition-colors"
+            className="w-full flex items-center justify-center gap-3 bg-[#1DB954] hover:bg-[#1ed760]  hover:cursor-pointer text-white font-medium py-3 px-4 rounded-lg transition-colors"
           >
             <svg
               className="w-5 h-5"
@@ -44,6 +45,10 @@ export default function LoginPage() {
             </svg>
             Sign in with Spotify
           </Button>
+          
+        </div>
+        <div className="fixed bottom-4 left-4 z-50 md:bottom-6 md:left-6">
+          <ModeToggle />
         </div>
       </div>
     </div>

@@ -6,6 +6,8 @@ import Agent from "./components/agent";
 import Queue from "./components/queue";
 import Chat from "./components/chat";
 import { useSession } from "next-auth/react";
+import { ModeToggle } from "@/components/ui/mode-toggle"
+
 
 declare global {
     interface Window {
@@ -92,6 +94,9 @@ export default function Player() {
                 <Agent />
             </div>
             <Queue />
+            <div className="fixed bottom-4 left-4 z-50 md:bottom-6 md:left-6">
+          <ModeToggle />
+        </div>
         </div>
     );
 }
