@@ -14,12 +14,22 @@ declare global {
     }
 }
 
+interface Track {
+    title: string;
+    artist: string;
+    albumArtUrl: string;
+    duration: number; // in seconds
+    currentTime: number; // in seconds
+}
+
 export default function Player() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
 
     const { data: session } = useSession();
+
+    const [trackInfo, setTrackInfo] = useState<Track | null>(null);
 
     useEffect(() => {
         if (!session) return;
@@ -45,8 +55,17 @@ export default function Player() {
                 volume: 0.5,
             });
 
-            player.addListener("ready", ({ device_id }: any) => {
+            player.addListener("ready", async ({ device_id }: any) => {
                 console.log("Ready with Device ID", device_id);
+                const response = await fetch("/api/add_queue/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ device_id: device_id }),
+                });
+                const track: Track = await response.json();
+                setTrackInfo(track);
             });
 
             player.addListener("not_ready", ({ device_id }: any) => {
@@ -67,7 +86,7 @@ export default function Player() {
             <Chat />
             <div className="min-h-screen p-8 flex flex-col gap-12">
                 <div className="flex items-center justify-center gap-4">
-                    <Playback />
+                    <Playback trackInfo={trackInfo} />
                 </div>
 
                 <Agent />

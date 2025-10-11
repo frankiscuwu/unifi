@@ -1,6 +1,19 @@
+import { useState } from "react";
 
+interface Track {
+    title: string;
+    artist: string;
+    albumArtUrl: string;
+    duration: number; // in seconds
+    currentTime: number; // in seconds
+}
 
-export default function Playback() {
+interface PlaybackProps {
+    trackInfo: Track | null;
+}
+
+export default function Playback({ trackInfo }: PlaybackProps) {
+    const [track, setTrack] = useState<Track | null>(trackInfo || null);
     return (
         <div className="w-full max-w-xl mx-auto bg-neutral-900 text-white p-4 rounded-2xl shadow-lg flex flex-col gap-4">
             {/* Top Section: Track Info */}
@@ -11,8 +24,8 @@ export default function Playback() {
                     alt="Album Art"
                     className="w-16 h-16 rounded-lg shadow-md"
                 />
-                <span className="text-sm font-semibold">As It Was</span>
-                <span className="text-xs text-gray-400">Harry Styles</span>
+                <span className="text-sm font-semibold">{track?.title || "NOTHING"}</span>
+                <span className="text-xs text-gray-400">{track?.artist || "NOTHING"}</span>
             </div>
 
             {/* Middle Section: Playback Controls */}
