@@ -12,12 +12,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    // Parse track URI from request body
-    const { device_id } = await req.json();
-    if (!device_id) {
-      return NextResponse.json({ error: 'No track URI or device ID provided' }, { status: 400 });
-    }
-
     // Call Spotify API to add track to queue
     const response = await fetch(
       `https://api.spotify.com/v1/me/top/tracks?limit=5&time_range=medium_term`,
@@ -32,9 +26,13 @@ export async function POST(req: NextRequest) {
     console.log("TEST1")
 
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await response.text();
+      console.log(errorData)
       return NextResponse.json(errorData, { status: response.status });
     }
+
+    console.log("TEST")
+
 
     
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -63,6 +61,8 @@ export async function POST(req: NextRequest) {
         },
       },
     });
+
+    console.log(response)
 
     console.log("TEST2")
 
