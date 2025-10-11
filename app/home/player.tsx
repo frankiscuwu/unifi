@@ -22,7 +22,7 @@ export default function Player() {
     const { data: session } = useSession();
 
     useEffect(() => {
-        console.log("JODI SUCKS", session)
+        if (!session) return;
         // Load the SDK script dynamically
         const script = document.createElement("script");
         script.src = "https://sdk.scdn.co/spotify-player.js";
@@ -60,7 +60,7 @@ export default function Player() {
             // Cleanup script when component unmounts
             document.body.removeChild(script);
         };
-    }, []);
+    }, [session]);
 
     return (
         <div className="flex-rows md:flex gap-1 items-center">
