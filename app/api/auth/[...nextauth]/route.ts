@@ -10,6 +10,7 @@ export const authOptions: AuthOptions = {
         'https://accounts.spotify.com/authorize?scope=user-read-email,user-modify-playback-state,user-read-playback-state',
     }),
   ],
+  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async jwt({ token, account }) {
       if (account) {
