@@ -67,7 +67,6 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ device_id }),
                 });
-                console.log("Add to queue response:", response);
             });
 
             spotifyPlayer.addListener("not_ready", ({ device_id }: any) => {
@@ -97,6 +96,24 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     ]);
     const [current, setCurrent] = useState<Track | null>(queue[0] ?? null);
     const [isPlaying, setIsPlaying] = useState(false);
+
+    useEffect(() => {
+        if (!player) return;
+        player.getCurrentState().then((state: any) => {
+            if (!state) {
+                console.error(
+                    "User is not playing music through the Web Playback SDK"
+                );
+                return;
+            }
+
+            var current_track = state.track_window.current_track;
+            var next_track = state.track_window.next_tracks[0];
+
+            console.log("Currently Playing", current_track);
+            console.log("Playing Next", next_track);
+        });
+    }, [player]);
 
     const play = useCallback((track?: Track) => {
         if (track) {
