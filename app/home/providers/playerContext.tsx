@@ -99,20 +99,28 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         if (!player) return;
-        player.getCurrentState().then((state: any) => {
-            if (!state) {
-                console.error(
-                    "User is not playing music through the Web Playback SDK"
-                );
-                return;
-            }
 
-            var current_track = state.track_window.current_track;
-            var next_track = state.track_window.next_tracks[0];
+        const handleStateChange = (state: any) => {
+            if (!state) return;
+            const currentTrack = state.track_window.current_track;
 
-            console.log("Currently Playing", current_track);
-            console.log("Playing Next", next_track);
-        });
+            setCurrent({
+                id: currentTrack.id,
+                title: currentTrack.name,
+                artist: currentTrack.artists?.[0]?.name,
+                albumArtUrl: currentTrack.album?.images?.[0]?.url,
+                duration: currentTrack.duration_ms / 1000,
+            });
+
+            setIsPlaying(!state.paused);
+        };
+
+        player.addListener("player_state_changed", handleStateChange);
+
+        // Cleanup on unmount
+        return () => {
+            player.removeListener("player_state_changed", handleStateChange);
+        };
     }, [player]);
 
     const play = useCallback((track?: Track) => {
