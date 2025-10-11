@@ -1,36 +1,110 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Unifi - Spotify Integration App
 
-## Getting Started
+A Next.js application with Spotify OAuth integration, built with shadcn/ui components and Tailwind CSS.
 
-First, run the development server:
+## Features
+
+- **Login Page** (`/login`): Clean login interface with Spotify authentication button
+- **Spotify OAuth**: Secure authentication flow with Spotify
+- **Homepage** (`/home`): Dashboard showing authenticated user information
+- **Responsive Design**: Built with shadcn/ui components and Tailwind CSS
+
+## Setup Instructions
+
+### 1. Clone and Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Create Spotify App
+
+1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+2. Click "Create App"
+3. Fill in your app details:
+   - App name: "Unifi"
+   - App description: "Your description here"
+   - Website: `http://localhost:3000`
+   - Redirect URI: `http://localhost:3000/api/auth/callback`
+4. Save your app
+5. Copy the **Client ID** and **Client Secret**
+
+### 3. Environment Variables
+
+Update the `.env.local` file with your Spotify credentials:
+
+```env
+# Spotify OAuth Configuration
+SPOTIFY_CLIENT_ID=your_actual_spotify_client_id
+SPOTIFY_CLIENT_SECRET=your_actual_spotify_client_secret
+NEXTAUTH_SECRET=your_random_secret_string
+NEXTAUTH_URL=http://localhost:3000
+
+# Development
+NODE_ENV=development
+```
+
+### 4. Run the Application
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit `http://localhost:3000` and you'll be redirected to the login page.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Application Flow
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Root Path** (`/`) → Redirects to `/login`
+2. **Login Page** (`/login`) → User clicks "Sign in with Spotify"
+3. **Spotify OAuth** → User authorizes the app on Spotify
+4. **Callback** (`/api/auth/callback`) → Handles OAuth response
+5. **Homepage** (`/home`) → Shows authenticated user information
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+app/
+├── page.tsx                    # Root page (redirects to login)
+├── login/
+│   └── page.tsx               # Login page with Spotify button
+├── home/
+│   └── page.tsx               # Homepage for authenticated users
+├── api/
+│   └── auth/
+│       ├── spotify/
+│       │   └── route.ts       # Spotify OAuth initiation
+│       └── callback/
+│           └── route.ts       # OAuth callback handler
+└── globals.css                # Global styles with shadcn/ui variables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+components/
+└── ui/
+    └── button.tsx             # shadcn/ui Button component
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+lib/
+└── utils.ts                   # Utility functions (cn helper)
+```
 
-## Deploy on Vercel
+## Technologies Used
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Next.js 15** - React framework with App Router
+- **TypeScript** - Type safety
+- **shadcn/ui** - Beautiful UI components
+- **Tailwind CSS v4** - Styling
+- **Spotify Web API** - Authentication and data access
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Next Steps
+
+To extend this application, consider adding:
+
+- User session management (cookies/JWT)
+- Database integration for storing user data
+- Additional Spotify API endpoints (playlists, tracks, etc.)
+- User dashboard with Spotify data visualization
+- Playlist management features
+
+## Notes
+
+- This is a development setup. For production, update the redirect URIs in your Spotify app settings
+- The current implementation doesn't persist authentication state - users need to re-authenticate on page refresh
+- No database is configured - user data is only displayed from the OAuth response
