@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]/route'; // import your authOptions
+import connectDB from '@/lib/connectDB';
 
 export async function POST(req: NextRequest) {
   try {
+
+    await connectDB();
+
     // Get the user session from NextAuth
     const session = await getServerSession(authOptions);
 
