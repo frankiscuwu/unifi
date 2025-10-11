@@ -1,31 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { usePlayer } from "../providers/playerContext";
 
-interface Track {
-    title: string;
-    artist: string;
-    albumArtUrl: string;
-    duration: number; // in seconds
-    currentTime: number; // in seconds
-}
+export default function Playback() {
+    const { current, isPlaying, play, pause } = usePlayer();
+    const [track, setTrack] = useState(current);
 
-interface PlaybackProps {
-    trackInfo: Track | null;
-}
-
-export default function Playback({ trackInfo }: PlaybackProps) {
-    const [track, setTrack] = useState<Track | null>(trackInfo || null);
+    useEffect(() => {
+        setTrack(current as any);
+    }, [current]);
     return (
         <div className="w-full max-w-xl mx-auto bg-neutral-900 text-white p-4 rounded-2xl shadow-lg flex flex-col gap-4">
             {/* Top Section: Track Info */}
 
             <div className="flex flex-col align-center items-center gap-2">
                 <img
-                    src="https://media.pitchfork.com/photos/623b686c6597466fa9d6e32d/master/pass/Harry-Styles-Harrys-House.jpeg"
+                    src={
+                        track?.albumArtUrl ||
+                        "https://media.pitchfork.com/photos/623b686c6597466fa9d6e32d/master/pass/Harry-Styles-Harrys-House.jpeg"
+                    }
                     alt="Album Art"
                     className="w-16 h-16 rounded-lg shadow-md"
                 />
-                <span className="text-sm font-semibold">{track?.title || "NOTHING"}</span>
-                <span className="text-xs text-gray-400">{track?.artist || "NOTHING"}</span>
+                <span className="text-sm font-semibold">
+                    {track?.title || "NOTHING"}
+                </span>
+                <span className="text-xs text-gray-400">
+                    {track?.artist || "NOTHING"}
+                </span>
             </div>
 
             {/* Middle Section: Playback Controls */}
@@ -41,7 +42,10 @@ export default function Playback({ trackInfo }: PlaybackProps) {
                             <path d="M10 12L20 4v16zM4 4h2v16H4z" />
                         </svg>
                     </button>
-                    <button className="bg-white text-black rounded-full p-3 hover:scale-105 transition">
+                    <button
+                        onClick={() => (isPlaying ? pause() : play())}
+                        className="bg-white text-black rounded-full p-3 hover:scale-105 transition"
+                    >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="currentColor"
