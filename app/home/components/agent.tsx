@@ -83,9 +83,9 @@ export default function Agent() {
   return (
     <div className="relative flex flex-col h-full w-full max-w-xl mx-auto bg-neutral-900/80 backdrop-blur text-white rounded-xl shadow-xl overflow-hidden ring-1 ring-neutral-800">
       {/* Header */}
-      <div className="px-3 py-2 border-b border-neutral-800/80 flex items-center justify-between">
-        <h2 className="font-medium text-xs tracking-wide uppercase text-neutral-300">AI DJ</h2>
-        <span className="text-[10px] text-neutral-500">Gemini-ready</span>
+      <div className="justify-end px-3 py-2 border-b border-neutral-800/80 flex items-center">
+        <h2 className="font-medium mr-2 text-xs tracking-wide uppercase text-neutral-300 ">AI DJ</h2>
+        <span className="text-[10px] text-neutral-500">Gemini 2.5</span>
       </div>
 
       {/* Message History */}
