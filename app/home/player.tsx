@@ -19,17 +19,18 @@ declare global {
 export default function Player() {
     return (
         <PlayerProvider>
-            <div className="flex-rows md:flex gap-1 items-center">
-                <Chat />
+            <div className="flex-rows md:flex gap-1 items-center" style={{ borderColor: "red", borderWidth: 1}}>
+                {/* <Chat /> */}
+                <Playback />
+
                 <div className="min-h-screen p-8 flex flex-col gap-12">
-                    <div className="flex items-center justify-center gap-4">
-                        <Playback />
-                    </div>
-                    <div className="flex items-center justify-center gap-4 mt-auto">
-                        <Agent />
-                    </div>
+                    <Queue />
+                    <Agent />
                 </div>
-                <Queue />
+
+
+
+                
                 <div className="fixed bottom-4 left-4 z-50 md:bottom-6 md:left-6">
                     <ModeToggle />
                 </div>

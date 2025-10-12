@@ -8,7 +8,7 @@ export default function Queue() {
     
 
     return (
-        <div className="w-full max-w-md mx-auto h-[600px] bg-neutral-900 text-white rounded-2xl shadow-lg overflow-hidden">
+        <div className="w-full max-w-md mx-auto bg-neutral-900 text-white rounded-2xl shadow-lg overflow-hidden">
             {/* Header */}
             <div className="px-4 py-3 border-b border-neutral-800 flex justify-between items-center">
                 <h2 className="font-semibold text-lg">Up Next</h2>
