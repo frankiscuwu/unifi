@@ -178,6 +178,39 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         fetchNext();
     }, [trackTime]);
 
+    const [progress, setProgress] = useState(0); // ms into track
+
+    // Update progress locally every 500ms
+    useEffect(() => {
+        if (!current || !isPlaying) return;
+
+        // Start interval
+        const interval = setInterval(() => {
+            setProgress((prev) => {
+                const next = prev + 500;
+                return next > current.item?.duration_ms
+                    ? current.item.duration_ms
+                    : next;
+            });
+        }, 500);
+
+        return () => clearInterval(interval);
+    }, [current, isPlaying]);
+
+    const play = useCallback(
+        async () => {
+            if (!deviceReady || !player) return;
+
+            try {
+                await player.resume();
+                setIsPlaying(true);
+            } catch (err) {
+                console.error("Failed to play track:", err);
+            }
+        },
+        [deviceReady, player]
+    );
+
     const pause = useCallback(() => setIsPlaying(false), []);
 
     const addToQueue = useCallback((track: Track) => {
