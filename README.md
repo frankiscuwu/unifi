@@ -14,11 +14,12 @@
 </p>
 
 ---
-![alt text](https://github.com/frankiscuwu/unifi/blob/public/logo.png?raw=true)
+![alt text](https://github.com/frankiscuwu/unifi/public/logo.png?raw=true)
 
 ## 🚀 Overview
 
-**Unifi** is a collaborative music platform that enables users to listen to music together, dynamically curating a shared Spotify playlist that best reflects everyone’s unique tastes.  
+**Unifi** is a collaborative music platform that enables users to listen to music together, dynamically curating a shared Spotify playlist that best reflects everyone’s unique tastes. 
+
 The system merges multiple users’ preferences to create a seamless and social group listening experience powered by real-time updates and AI-DJ recommendations.
 
 ---
@@ -26,6 +27,7 @@ The system merges multiple users’ preferences to create a seamless and social 
 ## ✨ What It Does
 
 Unifi allows users to connect in shared music rooms where each participant’s favorite tracks and listening data contribute to a unified playlist.  
+
 When new users join, the playlist dynamically adjusts to include their preferences. Users can update the playlist by interacting through text or voice to request songs, set moods, or influence the overall direction of the mix.
 
 ---
