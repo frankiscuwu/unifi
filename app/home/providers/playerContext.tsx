@@ -9,6 +9,15 @@ import React, {
 } from "react";
 import { useSession } from "next-auth/react";
 
+// Extend the Window interface to include spotifyPlayerInitialized
+declare global {
+    interface Window {
+        spotifyPlayerInitialized?: boolean;
+        onSpotifyWebPlaybackSDKReady?: () => void;
+        Spotify?: any;
+    }
+}
+
 export interface Track {
     timestamp: number; // epoch time, when request returned
     progress_ms: number; // progress into the current track in ms
@@ -52,7 +61,11 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     const [deviceReady, setDeviceReady] = useState(false);
 
     useEffect(() => {
-        if (!session) return;
+        if (!session?.accessToken) return; // only start when we have a token
+
+        // prevent re-initialization
+        if (window.spotifyPlayerInitialized) return;
+        window.spotifyPlayerInitialized = true;
 
         const script = document.createElement("script");
         script.src = "https://sdk.scdn.co/spotify-player.js";
@@ -61,22 +74,27 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
         window.onSpotifyWebPlaybackSDKReady = () => {
             const spotifyPlayer = new window.Spotify.Player({
-                name: "Web Playback SDK Quick Start Player",
+                name: "Spootify Web Player",
                 getOAuthToken: (cb: (token: string) => void) => {
-                    if (session?.accessToken) cb(session.accessToken);
+                    cb(session.accessToken!);
                 },
                 volume: 0.5,
             });
 
             spotifyPlayer.addListener("ready", async ({ device_id }: any) => {
                 console.log("Spotify Player Ready with Device ID", device_id);
-                await fetch("/api/add_queue/", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ device_id }),
-                });
 
-                setDeviceReady(true); // now we can start fetching state
+                try {
+                    await fetch("/api/add_queue/", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ device_id }),
+                    });
+                } catch (e) {
+                    console.error("Failed to register device:", e);
+                }
+
+                setDeviceReady(true);
             });
 
             spotifyPlayer.connect();
@@ -84,9 +102,10 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         };
 
         return () => {
+            // clean up on unmount only (not re-runs)
             document.body.removeChild(script);
         };
-    }, [session?.refreshToken]);
+    }, [session?.accessToken]); // ✅ not refreshToken
 
     const [queue, setQueue] = useState<Track[]>([]);
     const [current, setCurrent] = useState<Track | null>(null);
