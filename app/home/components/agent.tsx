@@ -62,8 +62,10 @@ export default function Agent() {
     setInput("");
 
     // Replace placeholder with a concise DJ-style response (heuristic)
-    const reply = generateDjMessage(userText);
-    setMessages((prev) => prev.slice(0, -1).concat({ role: "agent", content: reply }));
+    setTimeout(() => {
+      const reply = generateDjMessage(userText);
+      setMessages((prev) => prev.slice(0, -1).concat({ role: "agent", content: reply }));
+    }, 400);
 
     try {
       // Keep analyzeTopTracks: send the user's text to your backend
