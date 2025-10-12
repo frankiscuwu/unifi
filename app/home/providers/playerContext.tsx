@@ -58,6 +58,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     const { data: session } = useSession();
 
     const [player, setPlayer] = useState<any>(null);
+    const [deviceId, setDeviceId] = useState<string | null>(null);
 
     const [deviceReady, setDeviceReady] = useState(false);
 
@@ -84,7 +85,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
             spotifyPlayer.addListener("ready", async ({ device_id }: any) => {
                 console.log("Spotify Player Ready with Device ID", device_id);
-
+                setDeviceId(device_id);
                 try {
                     await fetch("/api/join/", {
                         method: "POST",
@@ -120,7 +121,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
             const res = await fetch("/api/player_state", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ device: player?._options.id }),
+                body: JSON.stringify({ device: deviceId }),
             });
             const state = await res.json();
 
