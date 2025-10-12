@@ -13,7 +13,7 @@ export default function Playback() {
 
     return (
         
-        <div className="w-full max-w-xl mx-auto bg-neutral-900 text-white rounded-2xl shadow-lg flex flex-col">
+        <div className="w-full max-w-xl mx-auto bg-neutral-900 text-white rounded-2xl shadow-lg flex flex-col h-full">
             {/* Top Section: Track Info */}
 
             <div className="flex flex-col align-center items-center gap-2">
