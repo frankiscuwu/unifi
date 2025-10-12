@@ -117,7 +117,11 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         if (!deviceReady) return; // wait for device to be ready
 
         const fetchState = async () => {
-            const res = await fetch("/api/player_state");
+            const res = await fetch("/api/player_state", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ device: player?._options.id }),
+            });
             const state = await res.json();
             setCurrent(state);
             setTrackTime(state.progress_ms);
