@@ -149,7 +149,6 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
         // Call immediately
         fetchState();
-        fetchQueue();
 
         const interval = setInterval(fetchState, 3000);
         return () => clearInterval(interval);
