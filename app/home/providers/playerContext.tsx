@@ -134,10 +134,11 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
             const state = await res.json();
             setTrackTime(state.progress_ms);
             setIsPlaying(state.is_playing);
-            if (state?.item?.name !== current?.item?.name) {
+            setCurrent(state);
+
+            if (state.change === true) {
                 fetchQueue();
             }
-            setCurrent(state);
 
             player.getCurrentState().then((s: any) => {
                 if (!s) {
@@ -246,16 +247,55 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         [player]
     );
 
-    const fetchQueue = async () => {
-        const res: any = await fetch("/api/get_queue", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-        const ans = await res.json();
-        setQueue(ans.tracks || []);
+    // Rate-limited fetchQueue: at most one network call every MIN_INTERVAL ms.
+    const MIN_INTERVAL = 10000; // ms
+    const lastFetchRef = React.useRef<number>(0);
+    const pendingTimerRef = React.useRef<number | null>(null);
+
+    const doFetchQueue = async () => {
+        try {
+            const res: any = await fetch("/api/get_queue", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            const ans = await res.json();
+            setQueue(ans.tracks || []);
+        } catch (e) {
+            console.error("fetchQueue failed", e);
+        }
     };
+
+    const fetchQueue = React.useCallback(() => {
+        const now = Date.now();
+        const since = now - (lastFetchRef.current || 0);
+
+        if (since >= MIN_INTERVAL) {
+            // Enough time passed — run immediately
+            lastFetchRef.current = now;
+            // clear any pending timer
+            if (pendingTimerRef.current) {
+                window.clearTimeout(pendingTimerRef.current);
+                pendingTimerRef.current = null;
+            }
+            void doFetchQueue();
+            return;
+        }
+
+        // Too soon — schedule a single trailing call at (MIN_INTERVAL - since) ms
+        if (pendingTimerRef.current) {
+            // already scheduled
+            return;
+        }
+
+        const wait = MIN_INTERVAL - since;
+        pendingTimerRef.current = window.setTimeout(() => {
+            lastFetchRef.current = Date.now();
+            pendingTimerRef.current = null;
+            void doFetchQueue();
+        }, wait);
+    }, []);
 
     const value: PlayerContextValue = {
         player,
