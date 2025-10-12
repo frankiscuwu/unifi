@@ -19,17 +19,19 @@ export default function Playback() {
 
     const skip = () => {
         // Call /next api route to skip to next song
-        fetch('/api/next/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ song_uri: current?.item?.uri })
-        }).then(res => {
-            if (!res.ok) {
-                console.error('Failed to skip to next song');
-            }
-        }).catch(err => {
-            console.error('Error skipping to next song:', err);
-        });
+        fetch("/api/next/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ song_uri: current?.item?.uri }),
+        })
+            .then((res) => {
+                if (!res.ok) {
+                    console.error("Failed to skip to next song");
+                }
+            })
+            .catch((err) => {
+                console.error("Error skipping to next song:", err);
+            });
     };
 
     return (
@@ -37,21 +39,25 @@ export default function Playback() {
             {/* Top Section: Track Info */}
 
             <div className="flex flex-col align-center items-center gap-2">
-                <img
-                    src={
-                        current?.item?.album.images[0].url ||
-                        "https://media.pitchfork.com/photos/623b686c6597466fa9d6e32d/master/pass/Harry-Styles-Harrys-House.jpeg"
-                    }
-                    alt="Album Art"
-                    className="w-48 h-48 rounded-lg shadow-md"
-                />
+                {current?.item?.album.images[0].url ? (
+                    <img
+                        src={current?.item?.album.images[0].url}
+                        alt="Album Art"
+                        className="w-48 h-48 rounded-lg shadow-md"
+                    />
+                ) : (
+                    <div className="flex flex-col items-center justify-center h-full text-gray-400 p-4">
+                        {/* Spinner */}
+                        <div className="w-8 h-8 border-4 border-gray-600 border-t-white rounded-full animate-spin mb-3"></div>
+                    </div>
+                )}
                 <span className="text-sm font-semibold text-center">
-                    {current?.item?.name || "NOTHING"}
+                    {current?.item?.name || ""}
                 </span>
                 <span className="text-xs text-gray-400">
                     {current?.item?.artists
                         .map((artist) => artist.name)
-                        .join(", ") || "NOTHING"}
+                        .join(", ") || ""}
                 </span>
             </div>
 
@@ -81,7 +87,10 @@ export default function Playback() {
                             <path d="M8 5v14l11-7z" />
                         </svg>
                     </button> */}
-                    <button className="text-gray-400 hover:text-white transition" onClick={skip}>
+                    <button
+                        className="text-gray-400 hover:text-white transition"
+                        onClick={skip}
+                    >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="currentColor"
