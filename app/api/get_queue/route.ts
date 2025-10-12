@@ -46,7 +46,7 @@ export async function GET() {
             });
           }
 
-        return NextResponse.json({ queue });
+        return NextResponse.json({ tracks });
     } catch (error) {
         console.error(error);
         return NextResponse.json({ error: 'Server error' }, { status: 500 });
