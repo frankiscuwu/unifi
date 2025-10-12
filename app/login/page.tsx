@@ -1,56 +1,60 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useSession, signIn, signOut } from "next-auth/react"
-import { ModeToggle } from "@/components/ui/mode-toggle"
+import { signIn } from "next-auth/react";
+import { ModeToggle } from "@/components/ui/mode-toggle";
+import Image from "next/image";
 
 export default function LoginPage() {
-  const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
-  const handleSpotifyLogin = () => {
-    // Directly start the Spotify OAuth flow. This bypasses NextAuth's default sign-in page.
-    signIn('spotify', { callbackUrl: '/home' });
-  };
+    const handleSpotifyLogin = () => {
+        // Directly start the Spotify OAuth flow. This bypasses NextAuth's default sign-in page.
+        signIn("spotify", { callbackUrl: "/home" });
+    };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="max-w-md w-full space-y-8 p-8">
-        <div className="text-center">
-          <h2 className="mt-6 text-3xl font-bold text-foreground">
-            Welcome to Unifi
-          </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Connect your Spotify account to get started
-          </p>
-        </div>
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-background">
+            <div className="max-w-md w-full space-y-8 p-8">
+                <div className="text-center">
+                    <Image
+                        src="/logo.png" // ✅ direct path from /public
+                        alt="Unifi Logo"
+                        width={200}
+                        height={200}
+                        className="mx-auto h-60 w-auto"
+                    />{" "}
+                    <p className="mt-2 text-sm text-muted-foreground">
+                        Connect your Spotify account to get started
+                    </p>
+                </div>
 
-        {error && (
-          <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg">
-            <p className="text-sm">{error}</p>
-          </div>
-        )}
-        
-        <div className="mt-8 space-y-6">
-          <Button 
-            onClick={handleSpotifyLogin}
-            className="w-full flex items-center justify-center gap-3 bg-[#1DB954] hover:bg-[#1ed760]  hover:cursor-pointer text-white font-medium py-3 px-4 rounded-lg transition-colors"
-          >
-            <svg
-              className="w-5 h-5"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.301.421-1.02.599-1.559.3z"/>
-            </svg>
-            Sign in with Spotify
-          </Button>
-          
+                {error && (
+                    <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg">
+                        <p className="text-sm">{error}</p>
+                    </div>
+                )}
+
+                <div className="mt-8 space-y-6">
+                    <Button
+                        onClick={handleSpotifyLogin}
+                        className="w-full flex items-center justify-center gap-3 bg-[#1DB954] hover:bg-[#1ed760]  hover:cursor-pointer text-white font-medium py-3 px-4 rounded-lg transition-colors"
+                    >
+                        <svg
+                            className="w-5 h-5"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                        >
+                            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.301.421-1.02.599-1.559.3z" />
+                        </svg>
+                        Sign in with Spotify
+                    </Button>
+                </div>
+                <div className="fixed bottom-4 left-4 z-50 md:bottom-6 md:left-6">
+                    <ModeToggle />
+                </div>
+            </div>
         </div>
-        <div className="fixed bottom-4 left-4 z-50 md:bottom-6 md:left-6">
-          <ModeToggle />
-        </div>
-      </div>
-    </div>
-  );
+    );
 }
