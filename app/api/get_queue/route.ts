@@ -42,7 +42,8 @@ export async function GET() {
               name: trackData.name,
               album_image: trackData.album.images?.[0]?.url || "", // fallback if no image
               username: uri[1],
-              profile_picture: uri[2]
+              profile_picture: uri[2],
+              artist: trackData.artists.map((artist: any) => artist.name).join(", "),
             });
           }
 
