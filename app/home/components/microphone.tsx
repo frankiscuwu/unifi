@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Loader2, Mic, Square } from "lucide-react";
 import { sendAudioToGemini } from "../lib/voice";
 import { speakText } from "../lib/tts";
+import { postAnalyzeTopTracks } from "../lib/ai_textprompts";
 
 export default function Microphone() {
   const [isRecording, setIsRecording] = useState(false);
@@ -27,8 +28,16 @@ export default function Microphone() {
         try {
           const { text } = await sendAudioToGemini(blob);
           // For now, just log. Later, emit an event or update shared state.
-          console.log("GEMINI TEXT GOT BACK:", text);
-          speakText(text)
+          console.log("TRANSCRIPT:", text);
+          // Optional: speak back the transcript
+          speakText(text).catch(() => {});
+          // Send the transcript to ai_textprompts -> analyzeTopTracks
+          try {
+            const { uris } = await postAnalyzeTopTracks(text);
+            console.log("analyzeTopTracks URIs:", uris);
+          } catch (apiErr) {
+            console.error("ai_textprompts error:", apiErr);
+          }
         } catch (e) {
           console.error("VOICE API ERROR FROM AWAIT:", e);
         } finally {

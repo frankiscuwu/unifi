@@ -2,13 +2,42 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Mic, Square, Loader2 } from "lucide-react";
+import { postAnalyzeTopTracks } from "../lib/ai_textprompts";
+
+const RESPONSES = [
+  "That's a great song choice.",
+  "Great genre—nice pick!",
+  "Love that vibe.",
+  "Solid choice—sounds like your style.",
+  "Nice! That'll set the mood.",
+  "Excellent taste.",
+  "Nice pick—that slaps.",
+  "That’s a classic.",
+  "Great energy on that one.",
+  "Perfect for the moment.",
+  "I’m into that.",
+  "Fire choice.",
+  "That groove is immaculate.",
+  "Big fan of that sound.",
+  "Nice and smooth.",
+  "Quality selection.",
+  "That’s a vibe!",
+  "Clean choice—love it.",
+  "You’ve got great taste.",
+  "Let’s keep it rolling!"
+];
 
 export default function Agent() {
   const [messages, setMessages] = useState([
-    { role: "agent", content: "Hello! How can I help you today?" },
+    { role: "agent", content: "Hello! What kind of songs do you want to hear?" },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const endRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -18,31 +47,23 @@ export default function Agent() {
       { role: "agent", content: "Thinking..." },
     ];
     setMessages(newMessages);
+    const userText = input;
     setInput("");
 
-    setLoading(true);
+    // Replace placeholder with a random, friendly response
+    const reply = RESPONSES[Math.floor(Math.random() * RESPONSES.length)];
+    setMessages((prev) => prev.slice(0, -1).concat({ role: "agent", content: reply }));
+
     try {
-      const res = await fetch("/api/gemini", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: newMessages.map(({ role, content }) => ({ role, content })),
-          djPrompt: undefined, // optionally allow overrides later
-        }),
-      });
-      if (!res.ok) {
-        const err = await res.text();
-        throw new Error(err || `Gemini request failed (${res.status})`);
+      // Keep analyzeTopTracks: send the user's text to your backend
+      try {
+        const { uris } = await postAnalyzeTopTracks(userText);
+        console.log("Agent analyzeTopTracks URIs:", uris);
+      } catch (err) {
+        console.error("Agent ai_textprompts error:", err);
       }
-      const data = await res.json();
-      const reply = (data?.text as string) || "(no reply)";
-      setMessages((prev) => prev.slice(0, -1).concat({ role: "agent", content: reply }));
     } catch (e: any) {
-      console.error("Gemini error:", e);
-      setMessages((prev) => prev.slice(0, -1).concat({ role: "agent", content: "Sorry, I could not read that. Please try again." }));
-    } finally {
-      setLoading(false);
-    }
+      console.error("Gemini error:", e);    } 
   };
 
 
@@ -50,7 +71,7 @@ export default function Agent() {
     <div className="relative flex flex-col h-full w-full max-w-xl mx-auto bg-neutral-900/80 backdrop-blur text-white rounded-xl shadow-xl overflow-hidden ring-1 ring-neutral-800">
       {/* Header */}
       <div className="px-3 py-2 border-b border-neutral-800/80 flex items-center justify-between">
-        <h2 className="font-medium text-xs tracking-wide uppercase text-neutral-300">What kind of music are you into?</h2>
+        <h2 className="font-medium text-xs tracking-wide uppercase text-neutral-300">AI DJ</h2>
         <span className="text-[10px] text-neutral-500">Gemini-ready</span>
       </div>
 
@@ -74,6 +95,7 @@ export default function Agent() {
             </div>
           </div>
         ))}
+        <div ref={endRef} />
       </div>
 
       {/* Input Area */}
@@ -94,8 +116,6 @@ export default function Agent() {
           {loading ? "..." : "Send"}
         </button>
       </div>
-
-      {/* Mic removed: now a separate component (Microphone) */}
     </div>
   );
 }
