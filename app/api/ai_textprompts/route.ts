@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
 
     const userData = await userResponse.json();
     const username = userData.display_name || "unknown user";
+    const image = userData.images?.[0]?.url || "";
 
     const response = await fetch(
       `https://api.spotify.com/v1/me/following?type=artist`,
@@ -139,8 +140,8 @@ export async function POST(req: NextRequest) {
 
 
     for (const song of uris) {
-      if (!queueDoc.queue_data.includes([song, username])) {
-        queueDoc.queue_data.push([song, username]);
+      if (!queueDoc.queue_data.includes([song, username, image])) {
+        queueDoc.queue_data.push([song, username, image]);
       }
     }
     queueDoc.markModified('queue_data');

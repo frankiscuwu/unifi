@@ -4,15 +4,15 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 
 // TYPES
 export interface IQueue extends Document {
-    currentSong: [string, string];
-    queue_data: [string, string][];
+    currentSong: [string, string, string];
+    queue_data: [string, string, string][];
     devices: string[];
 }
 
 const QueueSchema = new Schema<IQueue>(
     {
         _id: { type: String, default: "QUEUE_SINGLETON" }, // force only one document
-        currentSong: { type: [String, String], required: true, default: ["", ""] },
+        currentSong: { type: [String, String, String], required: true, default: ["", ""] },
         queue_data: { type: mongoose.Schema.Types.Mixed, default: [] },
         devices: { type: mongoose.Schema.Types.Mixed, default: [] },
     },
