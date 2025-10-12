@@ -103,6 +103,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
                     console.error("Failed to register device:", e);
                 }
 
+                fetchQueue();
+
                 setDeviceReady(true);
             });
 
