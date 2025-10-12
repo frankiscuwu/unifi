@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
         }
 
         // if they arent trying to end the current song, dont continue
-        if (song_uri !== queueDoc.currentSong) {
+        if (song_uri !== queueDoc.currentSong[0]) {
             return NextResponse.json({ error: 'Not current song' }, { status: 400 });
         }
 
