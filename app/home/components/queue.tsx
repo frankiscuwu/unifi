@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Track, usePlayer } from "../providers/playerContext";
+import { QueueItem, Track, usePlayer } from "../providers/playerContext";
 
 function formatTime(ms: number) {
     const totalSeconds = Math.floor(ms / 1000);
@@ -9,33 +9,17 @@ function formatTime(ms: number) {
 }
 
 export default function Queue() {
-    const { queue, current, skip, removeFromQueue } = usePlayer();
+    const { queue, current } = usePlayer();
+
+    console.log(queue)
 
     // const songs = useMemo(() => queue.map((s) => ({ ...s })), [queue]);
-    const songs: Track[] = [
+    const songs: QueueItem[] = [
         {
-            timestamp: 90900,
-            progress_ms: 0,
-            is_playing: false,
-            item: {
-                id: "1",
-                name: "Sample Song",
-                album: {
-                    images: [
-                        {
-                            url: "https://media.pitchfork.com/photos/623b686c6597466fa9d6e32d/master/pass/Harry-Styles-Harrys-House.jpeg",
-                        },
-                    ],
-                    uri: "album-uri",
-                    name: "Sample Album",
-                },
-                artists: [{ name: "Sample Artist" }],
-                duration_ms: 180000,
-                uri: "track-uri",
-            },
+            uri: "track-uri",
+            image: "https://media.pitchfork.com/photos/623b686c6597466fa9d6e32d/master/pass/Harry-Styles-Harrys-House.jpeg",
         },
-    ];
-    const currentSong = current || songs[0];
+    ];  
 
     return (
         <div className="w-full h-full max-w-xl mx-auto bg-neutral-900 text-white rounded-2xl shadow-lg overflow-hidden">
