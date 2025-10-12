@@ -1,6 +1,24 @@
 # Unifi
 
-Unifi is a collaborative web platform that enables users to listen to music together while automatically curating a shared playlist that reflects everyone’s unique tastes. The system intelligently merges multiple users’ preferences, creating a seamless and social group listening experience powered by real-time updates and AI-driven recommendations.
+<p align="center">
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
+  <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" />
+  <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" />
+  <img src="https://img.shields.io/badge/Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white" />
+  <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" />
+  <img src="https://img.shields.io/badge/Spotify-1DB954?style=for-the-badge&logo=spotify&logoColor=white" />
+  <img src="https://img.shields.io/badge/Google%20Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white" />
+  <img src="https://img.shields.io/badge/ElevenLabs-FF6B00?style=for-the-badge&logoColor=white" />
+</p>
+
+---
+
+## Overview
+
+**Unifi** is a collaborative web platform that enables users to listen to music together while automatically curating a shared playlist that reflects everyone’s unique tastes.  
+The system intelligently merges multiple users’ preferences, creating a seamless and social group listening experience powered by real-time updates and AI-driven recommendations.
 
 ---
 
@@ -8,36 +26,36 @@ Unifi is a collaborative web platform that enables users to listen to music toge
 
 Unifi allows users to connect in shared music rooms where each participant’s favorite tracks and listening data contribute to a unified playlist.  
 When new users join, the playlist dynamically adjusts to include their preferences.  
-Users can interact through text or voice to request songs, set moods, or influence the overall direction of the mix, ensuring everyone hears music they enjoy while discovering new sounds introduced by others in the room.
+Users can interact through text or voice to request songs, set moods, or influence the overall direction of the mix — ensuring everyone hears music they love while discovering new sounds introduced by others in the room.
 
 ---
 
 ## How We Built It
 
 Unifi is built with **Next.js** and **React** for a modern, performant frontend and API layer.  
-The backend logic and data management are handled through **MongoDB**, hosted on **Railway**, while the application itself is deployed on **Vercel**.  
+The backend uses **MongoDB** (hosted on **Railway**) for persistent data storage, while the app is deployed on **Vercel** for seamless global delivery.  
 
-We integrated the **Spotify Web API** for track playback, playlist management, and user data synchronization.  
-AI-driven personalization is powered by **Google Gemini**, which provides intelligent playlist blending, natural language understanding, and contextual responses to user input.  
-**ElevenLabs** supports high-quality text-to-speech output, giving the AI DJ a natural, conversational voice within the app.
+We integrated the **Spotify Web API** for real-time playback and playlist management.  
+AI-driven personalization and natural language understanding are powered by **Google Gemini**, and **ElevenLabs** provides high-quality text-to-speech output for the AI DJ persona.
 
 ---
 
 ## What's Next for Unifi
 
-The next phase of Unifi will introduce **WebSocket-based real-time synchronization** for playback, chat, and playlist updates, enabling fully concurrent multi-user sessions.  
-We also plan to expand the concept of **individual music rooms**, allowing users to join or create private sessions with room codes, collaboratively manage queues, and shape the listening experience together.
+- Implement **WebSocket-based real-time synchronization** for playback, playlist updates, and live interactions.  
+- Introduce **individual music rooms** with unique access codes for private or group sessions.  
+- Expand AI capabilities to support dynamic conversation, contextual playlist shaping, and adaptive sound environments.
 
 ---
 
 ## Tech Stack
 
-**Languages & Frameworks**  
+**Languages & Frameworks:**  
 JavaScript, TypeScript, React, Next.js  
 
-**APIs & AI Services**  
+**APIs & AI Services:**  
 Spotify Web API, Google Gemini, ElevenLabs  
 
-**Database & Hosting**  
+**Database & Hosting:**  
 MongoDB, Railway, Vercel  
 
