@@ -28,7 +28,7 @@ export default function Playback() {
                     alt="Album Art"
                     className="w-48 h-48 rounded-lg shadow-md"
                 />
-                <span className="text-sm font-semibold">
+                <span className="text-sm font-semibold text-center">
                     {current?.item?.name || "NOTHING"}
                 </span>
                 <span className="text-xs text-gray-400">

@@ -12,23 +12,29 @@ export default function Queue() {
     const { queue, current, play, skip, removeFromQueue } = usePlayer();
 
     // const songs = useMemo(() => queue.map((s) => ({ ...s })), [queue]);
-    const songs: Track[] = [{
-        timestamp: 90900,
-        progress_ms: 0,
-        is_playing: false,
-        item: {
-            id: "1",
-            name: "Sample Song",
-            album: {
-                images: [{ url: "https://via.placeholder.com/150" }],
-                uri: "album-uri",
-                name: "Sample Album"
+    const songs: Track[] = [
+        {
+            timestamp: 90900,
+            progress_ms: 0,
+            is_playing: false,
+            item: {
+                id: "1",
+                name: "Sample Song",
+                album: {
+                    images: [
+                        {
+                            url: "https://media.pitchfork.com/photos/623b686c6597466fa9d6e32d/master/pass/Harry-Styles-Harrys-House.jpeg",
+                        },
+                    ],
+                    uri: "album-uri",
+                    name: "Sample Album",
+                },
+                artists: [{ name: "Sample Artist" }],
+                duration_ms: 180000,
+                uri: "track-uri",
             },
-            artists: [{ name: "Sample Artist" }],
-            duration_ms: 180000,
-            uri: "track-uri"
-        }
-    }];
+        },
+    ];
     const currentSong = current || songs[0];
 
     return (
