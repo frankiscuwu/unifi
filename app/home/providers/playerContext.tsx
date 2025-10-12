@@ -39,7 +39,7 @@ export interface Track {
 interface PlayerContextValue {
     player: any;
     setPlayer: (player: any) => void;
-    trackTime: number; // in seconds
+    trackTime: number; // in milliseconds
     queue: Track[];
     current: Track | null;
     isPlaying: boolean;
@@ -111,7 +111,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     const [queue, setQueue] = useState<Track[]>([]);
     const [current, setCurrent] = useState<Track | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [trackTime, setTrackTime] = useState(0); // in seconds
+    const [trackTime, setTrackTime] = useState(0); // in milliseconds
 
     useEffect(() => {
         if (!deviceReady) return; // wait for device to be ready
@@ -144,7 +144,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         const fetchNext = async () => {
             if (
                 current?.item?.duration_ms !== undefined &&
-                trackTime >= current.item.duration_ms * 1000 - 5000
+                trackTime >= current.item.duration_ms - 5000
             ) {
                 await fetch("/api/next", {
                     method: "POST",
