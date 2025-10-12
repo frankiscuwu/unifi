@@ -134,6 +134,9 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
             const state = await res.json();
             setTrackTime(state.progress_ms);
             setIsPlaying(state.is_playing);
+            if (state.item.name !== current?.item?.name) {
+                fetchQueue();
+            }
             setCurrent(state);
 
             player.getCurrentState().then((s: any) => {
@@ -197,20 +200,6 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         return () => clearInterval(interval);
     }, [current, isPlaying]);
 
-    const play = useCallback(
-        async () => {
-            if (!deviceReady || !player) return;
-
-            try {
-                await player.resume();
-                setIsPlaying(true);
-            } catch (err) {
-                console.error("Failed to play track:", err);
-            }
-        },
-        [deviceReady, player]
-    );
-
     const pause = useCallback(() => setIsPlaying(false), []);
 
     const addToQueue = useCallback((track: Track) => {
@@ -223,11 +212,11 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     const skip = useCallback(() => {
-        setQueue((q) => {
-            const [, ...rest] = q;
-            // setCurrent(rest[0] ?? null);
-            return rest;
-        });
+        // setQueue((q) => {
+        //     const [, ...rest] = q;
+        //     setCurrent(rest[0] ?? null);
+        //     return rest;
+        // });
     }, []);
 
     useEffect(() => {
@@ -265,7 +254,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
                 "Content-Type": "application/json",
             },
         });
-        setQueue(await res.json());
+        const ans = await res.json();
+        setQueue(ans.tracks || []);
     };
 
     const value: PlayerContextValue = {

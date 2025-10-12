@@ -1,32 +1,20 @@
-import { QueueItem, Track, usePlayer } from "../providers/playerContext";
-
-function formatTime(ms: number) {
-    const totalSeconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-}
+import { usePlayer } from "../providers/playerContext";
 
 export default function Queue() {
     const { queue, current } = usePlayer();
-    console.log("queue value:", queue);
-    console.log("queue type:", typeof queue);
 
     return (
         <div className="w-full h-full max-w-xl mx-auto bg-neutral-900 text-white rounded-2xl shadow-lg overflow-hidden">
             {/* Header */}
             <div className="px-4 py-3 border-b border-neutral-800 flex justify-between items-center">
                 <h2 className="font-semibold text-lg">Up Next</h2>
-                <span className="text-xs text-gray-400">
-                    {/* {songs.length} songs */}
-                </span>
             </div>
 
-            {/* Song List */}
-            <div className="divide-y divide-neutral-800">
-                {queue.map((song) => (
+            {/* Scrollable Song List */}
+            <div className="divide-y divide-neutral-800 overflow-y-auto h-full pb-10">
+                {queue.map((song, index) => (
                     <div
-                        key={song.id}
+                        key={index}
                         className={`flex items-center gap-4 px-4 py-3 cursor-pointer hover:bg-neutral-800 transition ${
                             current && song.id === current.item?.id
                                 ? "bg-neutral-800"
@@ -46,16 +34,16 @@ export default function Queue() {
                                 {song.artist}
                             </div>
                         </div>
-                        {current && song.id === current.item?.id && (
-                            <div className="ml-2 text-green-500 animate-pulse">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="currentColor"
-                                    viewBox="0 0 24 24"
-                                    className="w-4 h-4"
-                                >
-                                    <path d="M4 3h4v18H4V3zm12 0h4v18h-4V3z" />
-                                </svg>
+                        {song.profile_picture && (
+                            <div className="relative group">
+                                <img
+                                    src={song.profile_picture}
+                                    alt={song.username}
+                                    className="w-8 h-8 rounded-full object-cover cursor-pointer"
+                                />
+                                <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                                    {song.username}
+                                </div>
                             </div>
                         )}
                     </div>
