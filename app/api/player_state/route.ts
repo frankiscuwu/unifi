@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
+import connectDB from "@/lib/connectDB";
+import Queue from "@/app/models/Queue";
 
 const SPOTIFY_API_URL = "https://api.spotify.com/v1/me/player";
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
     try {
         const session = await getServerSession(authOptions);
 
@@ -12,6 +14,14 @@ export async function GET(req: NextRequest) {
             return NextResponse.json(
                 { error: "Not authenticated" },
                 { status: 401 }
+            );
+        }
+
+        const { device } = await req.json();
+        if (!device) {
+            return NextResponse.json(
+                { error: "No device ID provided" },
+                { status: 400 }
             );
         }
 
@@ -39,6 +49,41 @@ export async function GET(req: NextRequest) {
         }
 
         const data = JSON.parse(text);
+
+        await connectDB();
+        
+        const queueDoc = await Queue.findById("QUEUE_SINGLETON");
+
+        if (!queueDoc) {
+            return NextResponse.json({ error: "Queue not initialized" }, { status: 500 });  
+        }
+
+        console.log(data.item.uri);
+
+        // Check if the current song is different than what we are playing
+        if (data.current && data.item.uri !== queueDoc.currentSong) {
+            console.log("Current song is different:", data.current.uri);
+
+            const response = await fetch(
+                `https://api.spotify.com/v1/me/player/play?device_id=${device}`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        Authorization: `Bearer ${session.accessToken}`,
+                    },
+                    body: JSON.stringify({
+                        uris: [queueDoc.currentSong]
+                    })
+                }
+            );
+
+            if (!response.ok) {
+                console.log(response.status, await response.text());
+            }
+
+        }
+
+
         return NextResponse.json(data);
     } catch (error) {
         console.error(error);

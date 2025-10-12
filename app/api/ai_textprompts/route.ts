@@ -20,9 +20,8 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'No track URI or device ID provided' }, { status: 400 });
     }
 
-   // Call Spotify API to add track to queue
    const response = await fetch(
-     `https://api.spotify.com/v1/me/top/tracks?limit=5&time_range=medium_term`,
+     `https://api.spotify.com/v1/me/following?type=artist`,
      {
        method: 'GET',
        headers: {
@@ -37,14 +36,13 @@ export async function POST(req: NextRequest) {
    }
 
 
-   async function analyzeTopTracks(simplifiedTracks: { Artist: string; Track: string }[]) {
+   async function analyzeTopTracks(f_artists: any[]) {
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-  
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: createUserContent([
-        JSON.stringify(simplifiedTracks),
-        "Summarize this user's music taste and suggest 5 similar tracks, giving only the Artist and Track as JSON array."
+        JSON.stringify(f_artists), textinput,
+        "Read this person's followed artists and their new preferences for the next songs, and give recommendations based on that, if there doesn't seem to be any overlap in the genres of the followed artists and preferences, just recommend songs based on the preference, giving only the Artist and Track as JSON array."
       ]),
       config: {
         responseMimeType: "application/json",
@@ -105,13 +103,10 @@ export async function POST(req: NextRequest) {
     };
 
    const topTracksData = await response.json();
-   const simplifiedTracks = topTracksData.items.map((track: SpotifyTrack) => ({
-    Artist: track.artists[0].name,
-    Track: track.name
-  }));
 
-   const results = await analyzeTopTracks(simplifiedTracks)
+   const results = await analyzeTopTracks(topTracksData)
    const uris = await getSpotifyURIs(results, session.accessToken)
+   console.log("URIS ", uris)
    return NextResponse.json({uris})
 
 

@@ -70,27 +70,6 @@ export async function POST(req: NextRequest) {
 
         const users = queueDoc.devices;
 
-        for (const device of users) {
-            console.log("Starting playback on device", device, "with song", queueDoc.currentSong);
-            // Call Spotify API to add track to queue
-
-            const response = await fetch(
-                `https://api.spotify.com/v1/me/player/play?device_id=${device}`,
-                {
-                    method: 'PUT',
-                    headers: {
-                        Authorization: `Bearer ${session.accessToken}`,
-                    },
-                    body: JSON.stringify({
-                        uris: [queueDoc.currentSong]
-                    })
-                }
-            );
-
-            if (!response.ok) {
-                continue;
-            }
-        }
 
         return NextResponse.json({ success: true });
     } catch (error) {
