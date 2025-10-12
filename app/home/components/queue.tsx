@@ -9,7 +9,7 @@ function formatTime(ms: number) {
 }
 
 export default function Queue() {
-    const { queue, current, play, skip, removeFromQueue } = usePlayer();
+    const { queue, current, skip, removeFromQueue } = usePlayer();
 
     // const songs = useMemo(() => queue.map((s) => ({ ...s })), [queue]);
     const songs: Track[] = [
@@ -52,7 +52,6 @@ export default function Queue() {
                 {songs.map((song) => (
                     <div
                         key={song.item.id}
-                        onClick={() => play(song)}
                         className={`flex items-center gap-4 px-4 py-3 cursor-pointer hover:bg-neutral-800 transition ${
                             current && song.item?.id === current.item?.id
                                 ? "bg-neutral-800"

@@ -8,6 +8,7 @@ import Chat from "./components/chat";
 import { PlayerProvider } from "./providers/playerContext";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import Microphone from "./components/microphone";
+import Background from "./components/background";
 
 declare global {
     interface Window {
@@ -35,6 +36,7 @@ export default function Player() {
                     <ModeToggle />
                 </div>
                 <Microphone />
+                <Background />
             </div>
         </PlayerProvider>
     );
