@@ -16,7 +16,7 @@ const QueueSchema = new Schema<IQueue>(
         queue_data: { type: mongoose.Schema.Types.Mixed, default: [] },
         devices: { type: mongoose.Schema.Types.Mixed, default: [] },
     },
-    { timestamps: true }
+    { timestamps: true, versionKey: false } 
 );
 
 export default (mongoose.models.Queue as Model<IQueue>) ||
