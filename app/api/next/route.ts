@@ -182,7 +182,12 @@ export async function POST(req: NextRequest) {
 
             console.log("New songs fetched:", uris);
             for (const song of uris) {
-                if (!queueDoc.queue_data.includes([song, username, image])) {
+                const exists = queueDoc.queue_data.some(
+                    (entry: [string, string, string]) =>
+                        entry[0] === song && entry[1] === username && entry[2] === image
+                );
+
+                if (!exists) {
                     queueDoc.queue_data.push([song, username, image]);
                 }
             }
