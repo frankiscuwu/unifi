@@ -144,7 +144,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         const fetchNext = async () => {
             if (
                 current?.item?.duration_ms !== undefined &&
-                trackTime <= current.item.duration_ms * 1000 - 5000
+                trackTime >= current.item.duration_ms * 1000 - 5000
             ) {
                 await fetch("/api/next", {
                     method: "POST",
