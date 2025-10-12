@@ -15,6 +15,8 @@ export const authOptions: AuthOptions = {
                     "user-modify-playback-state",
                     "streaming", // ✅ REQUIRED for Web Playback SDK
                     "app-remote-control", // ✅ optional but useful
+                    "user-top-read",      // ✅ access user's top artists and tracks
+                    "user-library-read"   // ✅ access user's saved tracks and albums (optional but useful) 
                 ].join("%20"),
         }),
     ],
