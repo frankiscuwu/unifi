@@ -61,8 +61,8 @@ export async function POST(req: NextRequest) {
         console.log(data.item.uri);
 
         // Check if the current song is different than what we are playing
-        if (data.current && data.item.uri !== queueDoc.currentSong) {
-            console.log("Current song is different:", data.current.uri);
+        if (data.item.uri !== queueDoc.currentSong) {
+            console.log("Current song is different:", data.item.uri);
 
             const response = await fetch(
                 `https://api.spotify.com/v1/me/player/play?device_id=${device}`,
