@@ -180,16 +180,14 @@ export async function POST(req: NextRequest) {
         }
 
 
-        // PLAY THE CURRENT SONG
+        // PLAY THE CURRENT SONG for me only
 
-        const users = queueDoc.devices;
-
-        for (const device of users) {
-            console.log("Starting playback on device", device, "with song", queueDoc.currentSong);
+        
+            console.log("Starting playback on device", device_id, "with song", queueDoc.currentSong);
             // Call Spotify API to add track to queue
 
-            const response = await fetch(
-                `https://api.spotify.com/v1/me/player/play?device_id=${device}`,
+            const response2 = await fetch(
+                `https://api.spotify.com/v1/me/player/play?device_id=${device_id }`,
                 {
                     method: 'PUT',
                     headers: {
@@ -201,10 +199,12 @@ export async function POST(req: NextRequest) {
                 }
             );
 
-            if (!response.ok) {
-                continue;
+            if (!response2.ok) {
+                const errorData = await response2.text();
+                console.log("Failed to start playback:", response2.status, errorData);
+                return NextResponse.json(errorData, { status: response2.status });
             }
-        }
+        
 
         return NextResponse.json({ success: true });
     } catch (error) {
