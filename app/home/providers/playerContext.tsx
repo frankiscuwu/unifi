@@ -140,6 +140,22 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         return () => clearInterval(interval);
     }, [current?.is_playing]);
 
+    useEffect(() => {
+        const fetchNext = async () => {
+            if (
+                current?.item?.duration_ms !== undefined &&
+                trackTime <= current.item.duration_ms * 1000 - 5000
+            ) {
+                await fetch("/api/next", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ song_uri: current.item.uri }),
+                });
+            }
+        };
+        fetchNext();
+    }, [trackTime]);
+
     const [progress, setProgress] = useState(0); // ms into track
 
     // Update progress locally every 500ms
