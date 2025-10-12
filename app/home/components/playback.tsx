@@ -9,7 +9,7 @@ function formatTime(ms: number) {
 }
 
 export default function Playback() {
-    const { current, isPlaying, trackTime, play, pause, volume, setVolume } =
+    const { current, isPlaying, trackTime, pause, volume, setVolume } =
         usePlayer();
 
     const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {

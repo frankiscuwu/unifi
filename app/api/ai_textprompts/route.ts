@@ -22,6 +22,25 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No track URI or device ID provided' }, { status: 400 });
     }
 
+    // GET MY USERNAME FROM SPOTIFY
+    const userResponse = await fetch(
+      `https://api.spotify.com/v1/me`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+      }
+    );
+
+    if (!userResponse.ok) {
+      const errorData = await userResponse.text();
+      return NextResponse.json(errorData, { status: userResponse.status });
+    }
+
+    const userData = await userResponse.json();
+    const username = userData.display_name || "unknown user";
+
     const response = await fetch(
       `https://api.spotify.com/v1/me/following?type=artist`,
       {
@@ -120,8 +139,8 @@ export async function POST(req: NextRequest) {
 
 
     for (const song of uris) {
-      if (!queueDoc.queue_data.includes(song)) {
-        queueDoc.queue_data.push(song);
+      if (!queueDoc.queue_data.includes([song, username])) {
+        queueDoc.queue_data.push([song, username]);
       }
     }
     queueDoc.markModified('queue_data');

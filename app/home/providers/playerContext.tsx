@@ -38,12 +38,10 @@ export interface Track {
 
 interface PlayerContextValue {
     player: any;
-    setPlayer: (player: any) => void;
     trackTime: number; // in milliseconds
     queue: Track[];
     current: Track | null;
     isPlaying: boolean;
-    play: (track?: Track) => void;
     pause: () => void;
     addToQueue: (track: Track) => void;
     removeFromQueue: (id?: string | number) => void;
@@ -63,9 +61,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     const [deviceReady, setDeviceReady] = useState(false);
 
     useEffect(() => {
-        if (!session?.accessToken) return; // only start when we have a token
+        if (!session?.accessToken) return;
 
-        // prevent re-initialization
         if (window.spotifyPlayerInitialized) return;
         window.spotifyPlayerInitialized = true;
 
@@ -76,16 +73,17 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
         window.onSpotifyWebPlaybackSDKReady = () => {
             const spotifyPlayer = new window.Spotify.Player({
-                name: "Spootify Web Player",
-                getOAuthToken: (cb: (token: string) => void) => {
-                    cb(session.accessToken!);
-                },
+                name: "Spotify Web Player",
+                getOAuthToken: (cb: (token: string) => void) =>
+                    cb(session.accessToken!),
                 volume: 0.5,
+                enableMediaSession: true,
             });
 
             spotifyPlayer.addListener("ready", async ({ device_id }: any) => {
                 console.log("Spotify Player Ready with Device ID", device_id);
                 setDeviceId(device_id);
+
                 try {
                     await fetch("/api/join/", {
                         method: "POST",
@@ -100,14 +98,15 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
             });
 
             spotifyPlayer.connect();
+            spotifyPlayer.activateElement();
+
             setPlayer(spotifyPlayer);
         };
 
         return () => {
-            // clean up on unmount only (not re-runs)
             document.body.removeChild(script);
         };
-    }, [session?.accessToken]); // ✅ not refreshToken
+    }, [session?.accessToken]);
 
     const [queue, setQueue] = useState<Track[]>([]);
     const [current, setCurrent] = useState<Track | null>(null);
@@ -124,9 +123,15 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
                 body: JSON.stringify({ device: deviceId }),
             });
             const state = await res.json();
-            setCurrent(state);
             setTrackTime(state.progress_ms);
             setIsPlaying(state.is_playing);
+            setCurrent(state);
+            player.getCurrentState().then((s: any) => {
+                if (!s) {
+                    return;
+                }
+                player.resume();
+            });
         };
 
         // Call immediately
@@ -135,12 +140,6 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         const interval = setInterval(fetchState, 3000);
         return () => clearInterval(interval);
     }, [deviceReady]);
-
-    useEffect(() => {
-        if (current && deviceReady) {
-            play();
-        }
-    }, [current, deviceReady]);
 
     useEffect(() => {
         if (!current?.is_playing) return;
@@ -250,11 +249,9 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
     const value: PlayerContextValue = {
         player,
-        setPlayer,
         queue,
         current,
         isPlaying,
-        play,
         pause,
         addToQueue,
         removeFromQueue,

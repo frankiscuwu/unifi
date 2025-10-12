@@ -21,6 +21,25 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'No device ID provided' }, { status: 400 });
         }
 
+        // GET MY USERNAME FROM SPOTIFY
+        const userResponse = await fetch(
+            `https://api.spotify.com/v1/me`,
+            {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${session.accessToken}`,
+                },
+            }
+        );
+
+        if (!userResponse.ok) {
+            const errorData = await userResponse.text();
+            return NextResponse.json(errorData, { status: userResponse.status });
+        }
+
+        const userData = await userResponse.json();
+        const username = userData.display_name || "unknown user";
+
         await connectDB();
 
         let queueDoc = await Queue.findById("QUEUE_SINGLETON");
@@ -35,7 +54,7 @@ export async function POST(req: NextRequest) {
         if (!queueDoc) {
             queueDoc = await Queue.create({
                 _id: "QUEUE_SINGLETON",
-                currentSong: "none",
+                currentSong: ["none", "none"],
                 queue_data: [],
                 devices: [device_id]
             });
@@ -146,8 +165,8 @@ export async function POST(req: NextRequest) {
 
         console.log("New songs fetched:", uris);
         for (const song of uris) {
-            if (!queueDoc.queue_data.includes(song)) {
-                queueDoc.queue_data.push(song);
+            if (!queueDoc.queue_data.includes([song, username])) {
+                queueDoc.queue_data.push([song, username]);
             }
         }
         queueDoc.markModified('queue_data');
@@ -163,7 +182,7 @@ export async function POST(req: NextRequest) {
 
 
         // If no current song, move one from the queue to be current
-        if (!queueDoc.currentSong || queueDoc.currentSong === "none") {
+        if (!queueDoc.currentSong || queueDoc.currentSong[0] === "none") {
             if (queueDoc.queue_data.length > 0) {
                 // Promote first song to current
                 queueDoc.currentSong = queueDoc.queue_data.shift()!;
@@ -194,7 +213,7 @@ export async function POST(req: NextRequest) {
                         Authorization: `Bearer ${session.accessToken}`,
                     },
                     body: JSON.stringify({
-                        uris: [queueDoc.currentSong]
+                        uris: [queueDoc.currentSong[0]]
                     })
                 }
             );
