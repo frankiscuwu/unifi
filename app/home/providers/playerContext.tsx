@@ -36,10 +36,15 @@ export interface Track {
     };
 }
 
+export interface QueueItem {
+    uri: string;
+    image: string;
+}
+
 interface PlayerContextValue {
     player: any;
     trackTime: number; // in milliseconds
-    queue: Track[];
+    queue: QueueItem[];
     current: Track | null;
     isPlaying: boolean;
     pause: () => void;
@@ -108,7 +113,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         };
     }, [session?.accessToken]);
 
-    const [queue, setQueue] = useState<Track[]>([]);
+    const [queue, setQueue] = useState<QueueItem[]>([]);
     const [current, setCurrent] = useState<Track | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [trackTime, setTrackTime] = useState(0); // in milliseconds
@@ -126,6 +131,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
             setTrackTime(state.progress_ms);
             setIsPlaying(state.is_playing);
             setCurrent(state);
+
             player.getCurrentState().then((s: any) => {
                 if (!s) {
                     return;
@@ -136,6 +142,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
         // Call immediately
         fetchState();
+        fetchQueue();
 
         const interval = setInterval(fetchState, 3000);
         return () => clearInterval(interval);
@@ -203,7 +210,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     const pause = useCallback(() => setIsPlaying(false), []);
 
     const addToQueue = useCallback((track: Track) => {
-        setQueue((q) => [...q, track]);
+        // setQueue((q) => [...q, track]);
     }, []);
 
     const removeFromQueue = useCallback((id?: string | number) => {
@@ -214,7 +221,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     const skip = useCallback(() => {
         setQueue((q) => {
             const [, ...rest] = q;
-            setCurrent(rest[0] ?? null);
+            // setCurrent(rest[0] ?? null);
             return rest;
         });
     }, []);
@@ -246,6 +253,16 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         },
         [player]
     );
+
+    const fetchQueue = async () => {
+        const res: any = await fetch("/api/get_queue", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        setQueue(await res.json());
+    };
 
     const value: PlayerContextValue = {
         player,
