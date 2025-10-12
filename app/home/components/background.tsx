@@ -49,8 +49,8 @@ function generateRandomBubbles(count: number): Bubble[] {
         const emotion = EMOTIONS[Math.floor(Math.random() * EMOTIONS.length)];
         res.push({
             emotion,
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight,
+            x: Math.random() * window?.innerWidth,
+            y: Math.random() * window?.innerHeight,
             size: 800 + Math.random() * 800,
             alpha: 0,
             targetAlpha: 1,
