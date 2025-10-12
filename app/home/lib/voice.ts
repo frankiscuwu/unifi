@@ -1,4 +1,7 @@
-export async function sendAudioToGemini(blob: Blob, prompt?: string) {
+export async function sendAudioToGemini(
+  blob: Blob,
+  prompt?: string
+): Promise<{ transcript: string; djMessage: string }> {
   const form = new FormData();
   form.append("audio", blob, "recording.webm");
   if (prompt) form.append("prompt", prompt);
@@ -13,5 +16,14 @@ export async function sendAudioToGemini(blob: Blob, prompt?: string) {
     throw new Error(err?.error || `Voice API failed with ${res.status}`);
   }
 
-  return (await res.json()) as { ok: true; text: string };
+  const data = await res.json();
+  // Preferred new schema
+  if (typeof data?.transcript === "string" && typeof data?.djMessage === "string") {
+    return { transcript: data.transcript, djMessage: data.djMessage };
+  }
+  // Legacy fallback { ok, text }
+  if (typeof data?.text === "string") {
+    return { transcript: data.text, djMessage: data.text };
+  }
+  return { transcript: "", djMessage: "" };
 }

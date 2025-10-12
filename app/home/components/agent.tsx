@@ -4,28 +4,39 @@ import { useEffect, useRef, useState } from "react";
 import { Mic, Square, Loader2 } from "lucide-react";
 import { postAnalyzeTopTracks } from "../lib/ai_textprompts";
 
-const RESPONSES = [
-  "That's a great song choice.",
-  "Great genre—nice pick!",
-  "Love that vibe.",
-  "Solid choice—sounds like your style.",
-  "Nice! That'll set the mood.",
-  "Excellent taste.",
-  "Nice pick—that slaps.",
-  "That’s a classic.",
-  "Great energy on that one.",
-  "Perfect for the moment.",
-  "I’m into that.",
-  "Fire choice.",
-  "That groove is immaculate.",
-  "Big fan of that sound.",
-  "Nice and smooth.",
-  "Quality selection.",
-  "That’s a vibe!",
-  "Clean choice—love it.",
-  "You’ve got great taste.",
-  "Let’s keep it rolling!"
-];
+function generateDjMessage(transcript: string): string {
+  const t = (transcript || "").toLowerCase();
+
+  const actionPhrases = [
+    "on it—queueing that up.",
+    "got it—lining that up now.",
+    "done—adding to the queue.",
+  ];
+  const recommendPhrases = [
+    "got you—I'll pull a few recs you'll like.",
+    "give me a sec—curating some similar tracks.",
+    "I’ll spin up a few suggestions.",
+  ];
+  const neutralPhrases = [
+    "that's a great pick.",
+    "nice taste—that’s a vibe.",
+    "love that energy.",
+    "solid choice—let’s keep it rolling.",
+    "clean selection—sounds good.",
+  ];
+
+  if (/(play|queue|add|put on|spin)/.test(t)) {
+    return randomPick(actionPhrases);
+  }
+  if (/(recommend|suggest|something like|similar to|what should i listen|what should i play)/.test(t)) {
+    return randomPick(recommendPhrases);
+  }
+  return randomPick(neutralPhrases);
+}
+
+function randomPick<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
 
 export default function Agent() {
   const [messages, setMessages] = useState([
@@ -50,8 +61,8 @@ export default function Agent() {
     const userText = input;
     setInput("");
 
-    // Replace placeholder with a random, friendly response
-    const reply = RESPONSES[Math.floor(Math.random() * RESPONSES.length)];
+    // Replace placeholder with a concise DJ-style response (heuristic)
+    const reply = generateDjMessage(userText);
     setMessages((prev) => prev.slice(0, -1).concat({ role: "agent", content: reply }));
 
     try {

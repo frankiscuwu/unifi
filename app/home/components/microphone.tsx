@@ -5,15 +5,19 @@ import { Loader2, Mic, Square } from "lucide-react";
 import { sendAudioToGemini } from "../lib/voice";
 import { speakText } from "../lib/tts";
 import { postAnalyzeTopTracks } from "../lib/ai_textprompts";
+import { usePlayer } from "../providers/playerContext";
 
 export default function Microphone() {
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
+  const { volume, setVolume } = usePlayer();
+  const [tempVol] = useState(volume)
 
   const startRecording = async () => {
     try {
+      setVolume(0.1);
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mr = new MediaRecorder(stream);
       mediaRecorderRef.current = mr;
@@ -26,14 +30,15 @@ export default function Microphone() {
         const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
         console.log("BEFORE API CALL TO GEMINI:", blob)
         try {
-          const { text } = await sendAudioToGemini(blob);
-          // For now, just log. Later, emit an event or update shared state.
-          console.log("TRANSCRIPT:", text);
-          // Optional: speak back the transcript
-          speakText(text).catch(() => {});
-          // Send the transcript to ai_textprompts -> analyzeTopTracks
+          const { transcript, djMessage } = await sendAudioToGemini(blob);
+          // Log and act on structured results
+          console.log("TRANSCRIPT:", transcript);
+          console.log("DJ MESSAGE:", djMessage);
+          // DJ speaks back the concise response
+          speakText(djMessage).catch(() => { });
+          // Send the raw transcript to your analyzer
           try {
-            const { uris } = await postAnalyzeTopTracks(text);
+            const { uris } = await postAnalyzeTopTracks(transcript);
             console.log("analyzeTopTracks URIs:", uris);
           } catch (apiErr) {
             console.error("ai_textprompts error:", apiErr);
@@ -41,12 +46,13 @@ export default function Microphone() {
         } catch (e) {
           console.error("VOICE API ERROR FROM AWAIT:", e);
         } finally {
+          setVolume(tempVol);
           setIsProcessing(false);
         }
       };
       mr.start();
       setIsRecording(true);
-      
+
     } catch (e) {
       console.error("Microphone access denied or unavailable", e);
     }
@@ -57,7 +63,7 @@ export default function Microphone() {
     try {
       mediaRecorderRef.current?.stop();
       mediaRecorderRef.current?.stream.getTracks().forEach((t) => t.stop());
-    } catch {}
+    } catch { }
     setIsRecording(false);
   };
 
@@ -81,11 +87,10 @@ export default function Microphone() {
           aria-label={isRecording ? "Stop recording" : "Start recording"}
           disabled={isProcessing}
           onClick={isRecording ? stopRecording : startRecording}
-          className={`pointer-events-auto relative inline-flex h-24 w-24 md:h-28 md:w-28 items-center justify-center rounded-full transition-all duration-300 ease-out shadow-[0_10px_30px_rgba(0,0,0,0.35)] ring-1 ring-white/15 hover:scale-105 active:scale-95 ${
-            isRecording
+          className={`pointer-events-auto relative inline-flex h-24 w-24 md:h-28 md:w-28 items-center justify-center rounded-full transition-all duration-300 ease-out shadow-[0_10px_30px_rgba(0,0,0,0.35)] ring-1 ring-white/15 hover:scale-105 active:scale-95 ${isRecording
               ? "bg-gradient-to-br from-rose-500 to-red-600"
               : "bg-gradient-to-br from-emerald-500 to-emerald-600"
-          } ${isProcessing ? "opacity-90" : ""}`}
+            } ${isProcessing ? "opacity-90" : ""}`}
         >
           {/* subtle inner glow */}
           <span className="absolute inset-0 rounded-full bg-white/10 blur-2xl" aria-hidden="true" />
@@ -100,9 +105,8 @@ export default function Microphone() {
           {/* gradient ring */}
           <span
             aria-hidden
-            className={`absolute -inset-[6px] rounded-full bg-gradient-to-br ${
-              isRecording ? "from-rose-400/40 to-red-500/40" : "from-emerald-300/40 to-emerald-500/40"
-            } blur-lg`}
+            className={`absolute -inset-[6px] rounded-full bg-gradient-to-br ${isRecording ? "from-rose-400/40 to-red-500/40" : "from-emerald-300/40 to-emerald-500/40"
+              } blur-lg`}
           />
         </button>
 

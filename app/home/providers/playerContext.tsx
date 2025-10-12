@@ -178,7 +178,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         const interval = setInterval(() => {
             setProgress((prev) => {
                 const next = prev + 500;
-                return next > current.item.duration_ms
+                return next > current.item?.duration_ms
                     ? current.item.duration_ms
                     : next;
             });

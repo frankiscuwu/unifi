@@ -7,11 +7,10 @@ export async function speakText(
     body: JSON.stringify({ text }),
   });
 
+
   if (!res.ok) {
     const bodyText = await res.text();
-    // Surface numeric status and body for quick debugging
-    // You can remove this once you're done debugging
-    console.error("/api/tts failed:", res.status, res.statusText, bodyText);
+    console.error("/api/tts failed:", res.status);
     throw new Error(bodyText || `TTS request failed (${res.status})`);
   }
 
@@ -19,7 +18,9 @@ export async function speakText(
   const url = URL.createObjectURL(blob);
 
   const audio = new Audio(url);
+  audio.volume = 1;
   await audio.play();
+
 
   // Cleanup when finished
   audio.onended = () => URL.revokeObjectURL(url);

@@ -8,7 +8,7 @@ function getKey() {
   return key;
 }
 
-const DEFAULT_VOICE_ID = process.env.ELEVEN_LABS_VOICE_ID || "21m00Tcm4TlvDq8ikWAM"; // Default voice: Rachel
+const DEFAULT_VOICE_ID = process.env.ELEVEN_LABS_VOICE_ID || "DLsHlh26Ugcm6ELvS0qi"; // Change the voice eleven labs
 const DEFAULT_MODEL_ID = process.env.ELEVEN_LABS_MODEL_ID || "eleven_multilingual_v2";
 
 export async function POST(req: NextRequest) {
