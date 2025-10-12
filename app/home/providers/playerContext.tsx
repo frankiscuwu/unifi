@@ -86,7 +86,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
                 console.log("Spotify Player Ready with Device ID", device_id);
 
                 try {
-                    await fetch("/api/add_queue/", {
+                    await fetch("/api/join/", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ device_id }),

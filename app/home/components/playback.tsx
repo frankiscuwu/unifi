@@ -17,6 +17,21 @@ export default function Playback() {
         setVolume(newVolume);
     };
 
+    const skip = () => {
+        // Call /next api route to skip to next song
+        fetch('/api/next/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ song_uri: current?.item?.uri })
+        }).then(res => {
+            if (!res.ok) {
+                console.error('Failed to skip to next song');
+            }
+        }).catch(err => {
+            console.error('Error skipping to next song:', err);
+        });
+    };
+
     return (
         <div className="w-full mx-auto bg-neutral-900 text-white rounded-2xl shadow-lg flex flex-col h-full justify-center gap-6 p-6">
             {/* Top Section: Track Info */}
@@ -66,7 +81,7 @@ export default function Playback() {
                             <path d="M8 5v14l11-7z" />
                         </svg>
                     </button>
-                    <button className="text-gray-400 hover:text-white transition">
+                    <button className="text-gray-400 hover:text-white transition" onClick={skip}>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="currentColor"
