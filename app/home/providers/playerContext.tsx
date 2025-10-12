@@ -39,6 +39,7 @@ export interface Track {
 interface PlayerContextValue {
     player: any;
     setPlayer: (player: any) => void;
+    trackTime: number; // in seconds
     queue: Track[];
     current: Track | null;
     isPlaying: boolean;
@@ -110,6 +111,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     const [queue, setQueue] = useState<Track[]>([]);
     const [current, setCurrent] = useState<Track | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
+    const [trackTime, setTrackTime] = useState(0); // in seconds
 
     useEffect(() => {
         if (!deviceReady) return; // wait for device to be ready
@@ -118,7 +120,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
             const res = await fetch("/api/player_state");
             const state = await res.json();
             setCurrent(state);
-            setProgress(state.progress_ms);
+            setTrackTime(state.progress_ms);
         };
 
         // Call immediately
@@ -127,6 +129,16 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         const interval = setInterval(fetchState, 10000);
         return () => clearInterval(interval);
     }, [deviceReady]);
+
+    useEffect(() => {
+        if (!current?.is_playing) return;
+
+        const interval = setInterval(() => {
+            setTrackTime((t) => t + 1000);
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [current?.is_playing]);
 
     const [progress, setProgress] = useState(0); // ms into track
 
@@ -214,6 +226,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         addToQueue,
         removeFromQueue,
         skip,
+        trackTime,
         volume,
         setVolume: handleSetVolume,
     };

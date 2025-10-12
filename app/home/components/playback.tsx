@@ -1,3 +1,4 @@
+import { format } from "path";
 import { usePlayer } from "../providers/playerContext";
 
 function formatTime(ms: number) {
@@ -8,7 +9,8 @@ function formatTime(ms: number) {
 }
 
 export default function Playback() {
-    const { current, isPlaying, play, pause, volume, setVolume } = usePlayer();
+    const { current, isPlaying, trackTime, play, pause, volume, setVolume } =
+        usePlayer();
 
     const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newVolume = Number(e.target.value) / 100; // convert 0–100 → 0–1
@@ -16,7 +18,7 @@ export default function Playback() {
     };
 
     return (
-        <div className="w-full max-w-xl mx-auto bg-neutral-900 text-white rounded-2xl shadow-lg flex flex-col h-full justify-center gap-6 p-6">
+        <div className="w-full mx-auto bg-neutral-900 text-white rounded-2xl shadow-lg flex flex-col h-full justify-center gap-6 p-6">
             {/* Top Section: Track Info */}
 
             <div className="flex flex-col align-center items-center gap-2">
@@ -78,30 +80,25 @@ export default function Playback() {
 
                 {/* Progress Bar */}
                 <div className="flex items-center gap-2 w-full text-xs text-gray-400">
-                    <span>
-                        {current?.progress_ms
-                            ? formatTime(current?.progress_ms)
-                            : "0:00"}
+                    <span className="w-10 text-right">
+                        {trackTime ? formatTime(trackTime) : "0:00"}
                     </span>
+
                     <div className="flex-1 h-1 bg-gray-700 rounded-full overflow-hidden">
                         <div
                             className="h-full bg-green-500 transition-all duration-300"
                             style={{
-                                width: current?.item
-                                    ? `${Math.min(
-                                          100,
-                                          Math.floor(
-                                              ((current?.progress_ms || 0) /
-                                                  current?.item?.duration_ms) *
-                                                  100
-                                          )
-                                      )}%`
-                                    : "0%",
+                                width: `${Math.min(
+                                    100,
+                                    ((trackTime || 0) /
+                                        (current?.item?.duration_ms ?? 1)) *
+                                        100
+                                )}%`,
                             }}
                         />
                     </div>
 
-                    <span>
+                    <span className="w-10 text-left">
                         {current?.item?.duration_ms
                             ? formatTime(Number(current.item.duration_ms))
                             : "0:00"}
