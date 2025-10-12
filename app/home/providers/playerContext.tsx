@@ -136,7 +136,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
             setIsPlaying(state.is_playing);
             setCurrent(state);
 
-            if (state.change === true) {
+            if (state.changed === true) {
                 fetchQueue();
             }
 
