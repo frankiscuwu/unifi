@@ -134,7 +134,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
             const state = await res.json();
             setTrackTime(state.progress_ms);
             setIsPlaying(state.is_playing);
-            if (state.item.name !== current?.item?.name) {
+            if (state?.item?.name !== current?.item?.name) {
                 fetchQueue();
             }
             setCurrent(state);
