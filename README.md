@@ -42,13 +42,8 @@ AI-driven personalization and natural language understanding are powered by **Go
 
 ## 🔧 Tech Stack
 
-<p align="center">
-  <img src="https://skillicons.dev/icons?i=typescript,javascript,react,nextjs,mongodb,spotify,vercel,railway" height="48" />
-  <img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Google_Gemini_logo.svg" height="48" alt="Google Gemini" />
-  <img src="https://seeklogo.com/images/E/elevenlabs-logo-5E9F5F90C4-seeklogo.com.png" height="48" alt="ElevenLabs" />
-</p>
 
-**🌐 Languages & Frameworks**  
+**Languages & Frameworks**  
 TypeScript, JavaScript, React, Next.js  
 
 **APIs & AI Services**  
