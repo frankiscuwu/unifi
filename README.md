@@ -1,110 +1,92 @@
-# Unifi - Spotify Integration App
+# Unifi
 
-A Next.js application with Spotify OAuth integration, built with shadcn/ui components and Tailwind CSS.
+Unifi is a collaborative music platform that allows users to share and experience music together. It dynamically blends multiple users’ music tastes into a single, evolving playlist and provides an AI DJ to guide the experience through text or voice interaction.
 
-## Features
+---
 
-- **Login Page** (`/login`): Clean login interface with Spotify authentication button
-- **Spotify OAuth**: Secure authentication flow with Spotify
-- **Homepage** (`/home`): Dashboard showing authenticated user information
-- **Responsive Design**: Built with shadcn/ui components and Tailwind CSS
+## Table of Contents
 
-## Setup Instructions
+- [Inspiration](#inspiration)  
+- [What It Does](#what-it-does)  
+- [How We Built It](#how-we-built-it)  
+- [Challenges](#challenges)  
+- [Accomplishments](#accomplishments)  
+- [What We Learned](#what-we-learned)  
+- [What's Next](#whats-next-for-unifi)  
+- [Technologies Used](#technologies-used)  
+- [Installation](#installation)  
+- [Usage](#usage)  
+- [License](#license)  
 
-### 1. Clone and Install Dependencies
+---
 
-```bash
-npm install
-```
+## Inspiration
 
-### 2. Create Spotify App
+We were inspired to create a collaborative music experience where each user can listen to music together while curating a unique playlist that reflects the combined tastes of all participants. Unlike conventional playlist generators that rely solely on individual preferences, Unifi emphasizes collective curation, creating a coherent and balanced listening experience.
 
-1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
-2. Click "Create App"
-3. Fill in your app details:
-   - App name: "Unifi"
-   - App description: "Your description here"
-   - Website: `http://localhost:3000`
-   - Redirect URI: `http://localhost:3000/api/auth/callback`
-4. Save your app
-5. Copy the **Client ID** and **Client Secret**
+---
 
-### 3. Environment Variables
+## What It Does
 
-Update the `.env.local` file with your Spotify credentials:
+Unifi allows users to share and experience music together in a single, collaborative space.  
 
-```env
-# Spotify OAuth Configuration
-SPOTIFY_CLIENT_ID=your_actual_spotify_client_id
-SPOTIFY_CLIENT_SECRET=your_actual_spotify_client_secret
-NEXTAUTH_SECRET=your_random_secret_string
-NEXTAUTH_URL=http://localhost:3000
+- When a user joins a room, the system automatically curates a playlist that blends their favorite songs with those of others already in the session.  
+- Users can guide the playlist through messages or voice notes, and the system adapts in real time.  
+- This ensures participants hear songs they enjoy while also discovering new tracks introduced by friends, creating a dynamic and social listening experience.
 
-# Development
-NODE_ENV=development
-```
+---
 
-### 4. Run the Application
+## How We Built It
 
-```bash
-npm run dev
-```
+- **Framework:** Next.js for client and server architecture  
+- **Music Playback:** Spotify Web API for track retrieval, playback, and playlist management  
+- **AI Features:** Google Gemini for recommendations, speech-to-text interaction, and dynamic visual adaptation  
+- **Text-to-Speech:** ElevenLabs for spoken output from the AI DJ  
+- **Hosting:** Vercel  
 
-Visit `http://localhost:3000` and you'll be redirected to the login page.
+Gemini powers several key features:
 
-## Application Flow
+1. **Personalized Recommendations:** Suggests tracks based on group listening data  
+2. **Speech-to-Text Interaction:** Allows verbal song or genre requests  
+3. **Dynamic Visual Adaptation:** Generates background color palettes that harmonize with the music  
 
-1. **Root Path** (`/`) → Redirects to `/login`
-2. **Login Page** (`/login`) → User clicks "Sign in with Spotify"
-3. **Spotify OAuth** → User authorizes the app on Spotify
-4. **Callback** (`/api/auth/callback`) → Handles OAuth response
-5. **Homepage** (`/home`) → Shows authenticated user information
+Together, these technologies create an interactive, socially driven music environment that merges multiple users’ preferences.
 
-## Project Structure
+---
 
-```
-app/
-├── page.tsx                    # Root page (redirects to login)
-├── login/
-│   └── page.tsx               # Login page with Spotify button
-├── home/
-│   └── page.tsx               # Homepage for authenticated users
-├── api/
-│   └── auth/
-│       ├── spotify/
-│       │   └── route.ts       # Spotify OAuth initiation
-│       └── callback/
-│           └── route.ts       # OAuth callback handler
-└── globals.css                # Global styles with shadcn/ui variables
+## Challenges
 
-components/
-└── ui/
-    └── button.tsx             # shadcn/ui Button component
+- Real-time synchronization without WebSocket support on Vercel required alternative solutions.  
+- We implemented API endpoints that return the latest room state to ensure consistent playback across users.  
+- Future plans include a hybrid architecture to support full WebSocket connections for low-latency multi-user interactions.
 
-lib/
-└── utils.ts                   # Utility functions (cn helper)
-```
+---
+
+## Accomplishments
+
+- Successfully blended multiple users’ music tastes into collaborative playlists.  
+- Designed AI DJ interactions that respond to text and voice commands.  
+- Adapted to architectural limitations without WebSockets, keeping participants in sync.  
+- Learned to integrate multiple complex services into a seamless user experience.
+
+---
+
+## What We Learned
+
+- Generative AI works best when guided by users, creating a richer experience.  
+- Integrating multiple services (music streaming, AI reasoning, text-to-speech, visuals) requires careful orchestration.  
+- Team collaboration and shared vision were key to achieving a polished final product.
+
+---
+
+## What's Next for Unifi
+
+- Implement **real-time updates** with WebSockets for low-latency communication and true multi-user synchronization.  
+- Introduce **individual music rooms** with unique codes for collaborative playlist creation.  
+- Extend AI functionality for a more interactive DJ persona to support dynamic playlist shaping and environment adaptation.
+
+---
 
 ## Technologies Used
 
-- **Next.js 15** - React framework with App Router
-- **TypeScript** - Type safety
-- **shadcn/ui** - Beautiful UI components
-- **Tailwind CSS v4** - Styling
-- **Spotify Web API** - Authentication and data access
-
-## Next Steps
-
-To extend this application, consider adding:
-
-- User session management (cookies/JWT)
-- Database integration for storing user data
-- Additional Spotify API endpoints (playlists, tracks, etc.)
-- User dashboard with Spotify data visualization
-- Playlist management features
-
-## Notes
-
-- This is a development setup. For production, update the redirect URIs in your Spotify app settings
-- The current implementation doesn't persist authentication state - users need to re-authenticate on page refresh
-- No database is configured - user data is only displayed from the OAuth response
+JavaScript, TypeScript
