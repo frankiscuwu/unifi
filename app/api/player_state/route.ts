@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
         console.log(data.item.uri);
 
         // Check if the current song is different than what we are playing
-        if (data.item.uri !== queueDoc.currentSong) {
+        if (data.item.uri !== queueDoc.currentSong[0]) {
             console.log("Current song is different:", data.item.uri);
 
             const response = await fetch(
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
                         Authorization: `Bearer ${session.accessToken}`,
                     },
                     body: JSON.stringify({
-                        uris: [queueDoc.currentSong]
+                        uris: [queueDoc.currentSong[0]]
                     })
                 }
             );
