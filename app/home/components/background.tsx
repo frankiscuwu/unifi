@@ -66,11 +66,27 @@ export default function Background() {
     const bubblesRef = useRef<Bubble[]>([]);
     const isFirstRenderRef = useRef(true);
     const startTimeRef = useRef<number | null>(null);
+    const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
     useEffect(() => {
-        if (typeof window === "undefined") return; // skip server
-        bubblesRef.current = generateRandomBubbles(4);
+        if (typeof window === "undefined") return;
+
+        const updateSize = () => {
+            setDimensions({
+                width: window.innerWidth,
+                height: window.innerHeight,
+            });
+        };
+
+        updateSize();
+        window.addEventListener("resize", updateSize);
+        return () => window.removeEventListener("resize", updateSize);
     }, []);
+
+    useEffect(() => {
+        if (!dimensions.width || !dimensions.height) return;
+        bubblesRef.current = generateRandomBubbles(4);
+    }, [dimensions]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -242,8 +258,8 @@ export default function Background() {
         >
             <canvas
                 ref={canvasRef}
-                width={window.innerWidth}
-                height={window.innerHeight}
+                width={dimensions.width}
+                height={dimensions.height}
                 style={{
                     width: "100%",
                     height: "100%",

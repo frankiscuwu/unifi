@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { QueueItem, Track, usePlayer } from "../providers/playerContext";
 
 function formatTime(ms: number) {
@@ -10,16 +9,8 @@ function formatTime(ms: number) {
 
 export default function Queue() {
     const { queue, current } = usePlayer();
-
-    console.log(queue)
-
-    // const songs = useMemo(() => queue.map((s) => ({ ...s })), [queue]);
-    const songs: QueueItem[] = [
-        {
-            uri: "track-uri",
-            image: "https://media.pitchfork.com/photos/623b686c6597466fa9d6e32d/master/pass/Harry-Styles-Harrys-House.jpeg",
-        },
-    ];  
+    console.log("queue value:", queue);
+    console.log("queue type:", typeof queue);
 
     return (
         <div className="w-full h-full max-w-xl mx-auto bg-neutral-900 text-white rounded-2xl shadow-lg overflow-hidden">
@@ -33,37 +24,29 @@ export default function Queue() {
 
             {/* Song List */}
             <div className="divide-y divide-neutral-800">
-                {songs.map((song) => (
+                {queue.map((song) => (
                     <div
-                        key={song.item.id}
+                        key={song.id}
                         className={`flex items-center gap-4 px-4 py-3 cursor-pointer hover:bg-neutral-800 transition ${
-                            current && song.item?.id === current.item?.id
+                            current && song.id === current.item?.id
                                 ? "bg-neutral-800"
                                 : ""
                         }`}
                     >
                         <img
-                            src={
-                                song.item.album.images[0].url ||
-                                (song as any).albumArt
-                            }
-                            alt={song.item.name}
+                            src={song.album_image || (song as any).albumArt}
+                            alt={song.name}
                             className="w-12 h-12 rounded-md object-cover"
                         />
                         <div className="flex-1">
                             <div className="text-sm font-medium truncate">
-                                {song.item.name}
+                                {song.name}
                             </div>
                             <div className="text-xs text-gray-400 truncate">
-                                {song.item.artists
-                                    .map((artist) => artist.name)
-                                    .join(", ")}
+                                {song.artist}
                             </div>
                         </div>
-                        <div className="text-xs text-gray-400">
-                            {formatTime(song.item.duration_ms)}
-                        </div>
-                        {current && song.item?.id === current.item?.id && (
+                        {current && song.id === current.item?.id && (
                             <div className="ml-2 text-green-500 animate-pulse">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"

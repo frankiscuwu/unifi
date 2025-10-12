@@ -37,8 +37,12 @@ export interface Track {
 }
 
 export interface QueueItem {
-    uri: string;
-    image: string;
+    id: string;
+    name: string;
+    album_image: string;
+    username: string;
+    profile_picture: string;
+    artist: string;
 }
 
 interface PlayerContextValue {
