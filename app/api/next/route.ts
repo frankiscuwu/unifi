@@ -67,6 +67,7 @@ export async function POST(req: NextRequest) {
 
         const userData = await userResponse.json();
         const username = userData.display_name || "unknown user";
+        const image = userData.images?.[0]?.url || "";
 
 
         // Advance the current song
@@ -181,8 +182,8 @@ export async function POST(req: NextRequest) {
 
             console.log("New songs fetched:", uris);
             for (const song of uris) {
-                if (!queueDoc.queue_data.includes([song, username])) {
-                    queueDoc.queue_data.push([song, username]);
+                if (!queueDoc.queue_data.includes([song, username, image])) {
+                    queueDoc.queue_data.push([song, username, image]);
                 }
             }
             queueDoc.markModified('queue_data');
