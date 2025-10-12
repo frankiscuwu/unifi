@@ -84,7 +84,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         return () => {
             document.body.removeChild(script);
         };
-    }, [session]);
+    }, [session?.refreshToken]);
 
     const [queue, setQueue] = useState<Track[]>([]);
     const [current, setCurrent] = useState<Track | null>(null);
