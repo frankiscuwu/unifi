@@ -28,6 +28,7 @@ export default function Microphone() {
           const { text } = await sendAudioToGemini(blob);
           // For now, just log. Later, emit an event or update shared state.
           console.log("GEMINI TEXT GOT BACK:", text);
+          speakText(text)
         } catch (e) {
           console.error("VOICE API ERROR FROM AWAIT:", e);
         } finally {
@@ -36,7 +37,7 @@ export default function Microphone() {
       };
       mr.start();
       setIsRecording(true);
-      speakText("Hello world! Frank sucks!")
+      
     } catch (e) {
       console.error("Microphone access denied or unavailable", e);
     }
@@ -52,7 +53,7 @@ export default function Microphone() {
   };
 
   return (
-    <div className="fixed inset-0 pointer-events-none flex items-center justify-center">
+    <div className="fixed inset-0 pointer-events-none flex items-center justify-center hover:cursor-pointer">
       <div className="relative pointer-events-none">
         {/* Pulsing rings when recording */}
         {isRecording && !isProcessing && (

@@ -48,7 +48,7 @@ export default function Queue() {
                         key={song.item.id}
                         onClick={() => play(song)}
                         className={`flex items-center gap-4 px-4 py-3 cursor-pointer hover:bg-neutral-800 transition ${
-                            current && song.item.id === current.item.id
+                            current && song.item?.id === current.item?.id
                                 ? "bg-neutral-800"
                                 : ""
                         }`}
@@ -74,7 +74,7 @@ export default function Queue() {
                         <div className="text-xs text-gray-400">
                             {formatTime(song.item.duration_ms)}
                         </div>
-                        {current && song.item.id === current.item.id && (
+                        {current && song.item?.id === current.item?.id && (
                             <div className="ml-2 text-green-500 animate-pulse">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
