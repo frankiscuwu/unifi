@@ -50,6 +50,8 @@ export async function POST(req: NextRequest) {
 
         let data = JSON.parse(text);
 
+        data.changed = false;
+
         await connectDB();
 
         const queueDoc = await Queue.findById("QUEUE_SINGLETON");
@@ -105,6 +107,7 @@ export async function POST(req: NextRequest) {
             }
 
             data = JSON.parse(text);
+            data.changed = true;
 
         }
 
