@@ -1,6 +1,40 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import SpotifyProvider from "next-auth/providers/spotify";
 
+async function refreshAccessToken(token: any) {
+    try {
+        const response = await fetch("https://accounts.spotify.com/api/token", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                Authorization: `Basic ${Buffer.from(
+                    `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`
+                ).toString("base64")}`,
+            },
+            body: new URLSearchParams({
+                grant_type: "refresh_token",
+                refresh_token: token.refreshToken,
+            }),
+        });
+
+        const refreshedTokens = await response.json();
+
+        if (!response.ok) throw refreshedTokens;
+
+        return {
+            ...token,
+            accessToken: refreshedTokens.access_token,
+            // Spotify’s expires_in is in seconds, so convert to ms
+            expires: Date.now() + refreshedTokens.expires_in * 1000,
+            // Spotify sometimes doesn’t return a new refresh token
+            refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
+        };
+    } catch (error) {
+        console.error("Error refreshing Spotify access token:", error);
+        return { ...token, error: "RefreshAccessTokenError" };
+    }
+}
+
 export const authOptions: AuthOptions = {
     providers: [
         SpotifyProvider({
@@ -15,8 +49,8 @@ export const authOptions: AuthOptions = {
                     "user-modify-playback-state",
                     "streaming", // ✅ REQUIRED for Web Playback SDK
                     "app-remote-control", // ✅ optional but useful
-                    "user-top-read",      // ✅ access user's top artists and tracks
-                    "user-library-read"   // ✅ access user's saved tracks and albums (optional but useful) 
+                    "user-top-read", // ✅ access user's top artists and tracks
+                    "user-library-read", // ✅ access user's saved tracks and albums (optional but useful)
                 ].join("%20"),
         }),
     ],
@@ -27,13 +61,24 @@ export const authOptions: AuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
         async jwt({ token, account }) {
+            // Initial sign in
             if (account) {
-                token.accessToken = account.access_token;
-                token.refreshToken = account.refresh_token;
-                token.expires = account.expires_at! * 1000;
+                return {
+                    accessToken: account.access_token,
+                    refreshToken: account.refresh_token,
+                    expires: account.expires_at! * 1000, // convert to ms
+                };
             }
-            return token;
+
+            // If token is still valid, return it
+            if (Date.now() < (token.expires as number)) {
+                return token;
+            }
+
+            // Token expired -> refresh
+            return await refreshAccessToken(token);
         },
+
         async session({ session, token }) {
             session.accessToken = token.accessToken;
             session.refreshToken = token.refreshToken;

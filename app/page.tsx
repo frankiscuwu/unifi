@@ -3,14 +3,21 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
 export default async function Page() {
-  // Get the current session on the server
-  const session = await getServerSession(authOptions);
+    const session = await getServerSession(authOptions);
 
-  // If we have a valid Spotify access token, send to the app home
-  if (session?.accessToken) {
+    // No session at all → login
+    if (!session) {
+        redirect("/login");
+    }
+
+    // If session exists but token expired or failed to refresh → login
+    const expires =
+        (session as any)?.token?.expires ||
+        (session as any)?.accessTokenExpires;
+    if (expires && Date.now() > expires) {
+        redirect("/login");
+    }
+
+    // Otherwise → home
     redirect("/home");
-  }
-
-  // Otherwise, send to login
-  redirect("/login");
 }
