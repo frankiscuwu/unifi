@@ -27,7 +27,7 @@ export async function GET() {
         const tracks = [];
 
 
-        for (const uri of queue) {
+        for (const uri of queue.slice(0, 5)) {
             const trackuri = uri[0]
             const trackId = trackuri.split(":")[2]; // extract ID from "spotify:track:<id>"
           
