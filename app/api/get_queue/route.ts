@@ -24,6 +24,28 @@ export async function GET() {
 
         const queue = queueDoc.queue_data;
 
+        const tracks = [];
+
+
+        for (const uri of queue) {
+            const trackuri = uri[0]
+            const trackId = trackuri.split(":")[2]; // extract ID from "spotify:track:<id>"
+          
+            const res = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
+              headers: { Authorization: `Bearer ${session.accessToken}` },
+            });
+            const trackData = await res.json();
+          
+            // Push only id, name, and image
+            tracks.push({
+              id: trackId,
+              name: trackData.name,
+              album_image: trackData.album.images?.[0]?.url || "", // fallback if no image
+              username: uri[1],
+              profile_picture: uri[2]
+            });
+          }
+
         return NextResponse.json({ queue });
     } catch (error) {
         console.error(error);
