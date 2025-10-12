@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
         model: "gemini-2.5-flash",
         contents: createUserContent([
           JSON.stringify(f_artists), textinput,
-          "Read this person's followed artists and their new preferences for the next songs, and give recommendations based on that, if there doesn't seem to be any overlap in the genres of the followed artists and preferences, just recommend songs based on the preference, giving only the Artist and Track as JSON array."
+          "Read this person's followed artists and their new preferences for the next songs, and give 2 recommendations based on that, if there doesn't seem to be any overlap in the genres of the followed artists and preferences, just recommend 2 songs based on the preference, giving only the Artist and Track as JSON array."
         ]),
         config: {
           responseMimeType: "application/json",
