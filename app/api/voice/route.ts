@@ -27,9 +27,7 @@ export async function POST(req: NextRequest) {
     const genAI = new GoogleGenerativeAI(getApiKey());
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" }); // Using gemini 2.5
 
-    const systemPrompt = form.get("prompt") as string | null;
-    const textPrompt =
-      systemPrompt + "Transcribe the user's audio and send it";
+    const textPrompt = "You are an AI DJ. Transcribe the user's audio. If they are requesting a song or certain types of songs, send back a description. If they have a request, send back the request.";
 
     const result = await model.generateContent({ contents: [ { role: "user", parts: [ { text: textPrompt }, { inlineData: { mimeType, data: base64 } }, ], }, ], });
 
