@@ -14,7 +14,7 @@
 </p>
 
 ---
-![alt text](https://github.com/frankiscuwu/unifi/public/logo.png?raw=true)
+![alt text](https://github.com/frankiscuwu/unifi/blob/main/public/logo.png?raw=true)
 
 ## 🚀 Overview
 
