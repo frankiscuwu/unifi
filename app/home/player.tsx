@@ -21,12 +21,12 @@ export default function Player() {
         <PlayerProvider>
             <div className="flex flex-col md:flex-row gap-8 items-center px-8 md:h-screen">
                 {/* Left column */}
-                <div className="md:w-1/2 h-[50vh] flex items-center justify-center">
+                <div className="md:w-1/2 h-[60vh] flex items-center justify-center">
                     <Playback />
                 </div>
 
                 {/* Right column */}
-                <div className="md:w-1/2 flex flex-col gap-6 justify-center h-[50vh] overflow-y-auto">
+                <div className="md:w-1/2 flex flex-col gap-6 justify-center h-[60vh] overflow-y-auto">
                     <Queue />
                     <Agent />
                 </div>
