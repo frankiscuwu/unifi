@@ -38,6 +38,8 @@ interface PlayerContextValue {
     addToQueue: (track: Track) => void;
     removeFromQueue: (id?: string | number) => void;
     skip: () => void;
+    volume: number;
+    setVolume: (volume: number) => void;
 }
 
 const PlayerContext = createContext<PlayerContextValue | undefined>(undefined);
@@ -154,6 +156,34 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         });
     }, []);
 
+    useEffect(() => {
+        if (!player) return;
+
+        const syncVolume = async () => {
+            const vol = await player.getVolume();
+            setVolume(vol);
+        };
+
+        // Run once on connect
+        syncVolume();
+
+        return () => {
+            player.removeListener("player_state_changed");
+        };
+    }, [player]);
+
+    const [volume, setVolume] = useState(0.5);
+
+    const handleSetVolume = useCallback(
+        (v: number) => {
+            setVolume(v);
+            if (player) {
+                player.setVolume(v);
+            }
+        },
+        [player]
+    );
+
     const value: PlayerContextValue = {
         player,
         setPlayer,
@@ -165,6 +195,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         addToQueue,
         removeFromQueue,
         skip,
+        volume,
+        setVolume: handleSetVolume,
     };
 
     return (

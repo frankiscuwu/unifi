@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { usePlayer } from "../providers/playerContext";
 
 function formatTime(ms: number) {
@@ -9,11 +8,15 @@ function formatTime(ms: number) {
 }
 
 export default function Playback() {
-    const { current, isPlaying, play, pause } = usePlayer();
+    const { current, isPlaying, play, pause, volume, setVolume } = usePlayer();
+
+    const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newVolume = Number(e.target.value) / 100; // convert 0–100 → 0–1
+        setVolume(newVolume);
+    };
 
     return (
-        
-        <div className="w-full max-w-xl mx-auto bg-neutral-900 text-white rounded-2xl shadow-lg flex flex-col h-full">
+        <div className="w-full max-w-xl mx-auto bg-neutral-900 text-white rounded-2xl shadow-lg flex flex-col h-full justify-center gap-6 p-6">
             {/* Top Section: Track Info */}
 
             <div className="flex flex-col align-center items-center gap-2">
@@ -23,7 +26,7 @@ export default function Playback() {
                         "https://media.pitchfork.com/photos/623b686c6597466fa9d6e32d/master/pass/Harry-Styles-Harrys-House.jpeg"
                     }
                     alt="Album Art"
-                    className="w-16 h-16 rounded-lg shadow-md"
+                    className="w-48 h-48 rounded-lg shadow-md"
                 />
                 <span className="text-sm font-semibold">
                     {current?.item?.name || "NOTHING"}
@@ -81,26 +84,23 @@ export default function Playback() {
                             : "0:00"}
                     </span>
                     <div className="flex-1 h-1 bg-gray-700 rounded-full overflow-hidden">
-                        <input
-                            type="range"
-                            min="0"
-                            max="100"
-                            value={
-                                current?.item
-                                    ? Math.min(
+                        <div
+                            className="h-full bg-green-500 transition-all duration-300"
+                            style={{
+                                width: current?.item
+                                    ? `${Math.min(
                                           100,
                                           Math.floor(
                                               ((current?.progress_ms || 0) /
                                                   current?.item?.duration_ms) *
                                                   100
                                           )
-                                      )
-                                    : 0
-                            }
-                            className="h-full bg-green-500"
-                            readOnly
+                                      )}%`
+                                    : "0%",
+                            }}
                         />
                     </div>
+
                     <span>
                         {current?.item?.duration_ms
                             ? formatTime(Number(current.item.duration_ms))
@@ -110,7 +110,7 @@ export default function Playback() {
             </div>
 
             {/* Bottom Section: Volume Control */}
-            <div className="flex items-center justify-end gap-2">
+            <div className="flex items-center justify-center gap-2 relative">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
@@ -119,8 +119,17 @@ export default function Playback() {
                 >
                     <path d="M3 9v6h4l5 5V4L7 9H3z" />
                 </svg>
-                <div className="w-24 h-1 bg-gray-700 rounded-full overflow-hidden">
-                    <div className="h-full bg-green-500 w-[60%]" />
+
+                <div className="relative w-24 h-1 bg-gray-700 rounded-full">
+                    <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={Math.floor(volume * 100)}
+                        onChange={handleVolumeChange}
+                        className="absolute top-0 left-0 w-full h-full appearance-none cursor-pointer accent-green-500 bg-transparent"
+                        style={{ transform: "translateY(-25%)" }} // small nudge to visually center
+                    />
                 </div>
             </div>
         </div>
