@@ -23,7 +23,7 @@ export default function LoginPage() {
                         alt="Unifi Logo"
                         width={200}
                         height={200}
-                        className="mx-auto h-60 w-auto"
+                        className="mx-auto h-60 w-auto dark:invert"
                     />{" "}
                     <p className="mt-2 text-sm text-muted-foreground">
                         Connect your Spotify account to get started
