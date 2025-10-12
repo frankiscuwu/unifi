@@ -58,7 +58,7 @@ export default function Playback() {
             {/* Middle Section: Playback Controls */}
             <div className="flex flex-col items-center gap-2">
                 <div className="flex items-center gap-6">
-                    <button className="text-gray-400 hover:text-white transition">
+                    {/* <button className="text-gray-400 hover:text-white transition">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="currentColor"
@@ -80,7 +80,7 @@ export default function Playback() {
                         >
                             <path d="M8 5v14l11-7z" />
                         </svg>
-                    </button>
+                    </button> */}
                     <button className="text-gray-400 hover:text-white transition" onClick={skip}>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"

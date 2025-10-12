@@ -119,8 +119,15 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         const fetchState = async () => {
             const res = await fetch("/api/player_state");
             const state = await res.json();
+
             setCurrent(state);
             setTrackTime(state.progress_ms);
+            setIsPlaying(state.is_playing);
+
+            // Play the track on the Spotify Web Player
+            if (state.item?.uri) {
+                play(state); // <-- pass the fetched track to your play() function
+            }
         };
 
         // Call immediately
@@ -175,14 +182,25 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         return () => clearInterval(interval);
     }, [current, isPlaying]);
 
-    const play = useCallback((track?: Track) => {
-        if (track) {
-            setCurrent(track);
-            // If not in queue, add it
-            // queue logic here
-        }
-        setIsPlaying(true);
-    }, []);
+    const play = useCallback(
+        async (track?: Track) => {
+            if (!deviceReady || !player) return;
+            if (track) setCurrent(track);
+
+            try {
+                if (track) {
+                    await player.play({ uris: [track.item.uri] }); // start new track
+                } else {
+                    await player.resume(); // resume current track
+                }
+                setIsPlaying(true);
+                console.log("Playback started/resumed");
+            } catch (err) {
+                console.error("Failed to play track:", err);
+            }
+        },
+        [deviceReady, player]
+    );
 
     const pause = useCallback(() => setIsPlaying(false), []);
 
