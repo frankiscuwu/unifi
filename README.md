@@ -18,7 +18,7 @@
 
 ## 🚀 Overview
 
-**Unifi** is a collaborative music platform that enables users to listen to music together, dynamically curating a shared Spotify playlist that best reflects everyone’s unique tastes. 
+**unifi** is a collaborative music platform that enables users to listen to music together, dynamically curating a shared Spotify playlist that best reflects everyone’s unique tastes. 
 
 The system merges multiple users’ preferences to create a seamless and social group listening experience powered by real-time updates and AI-DJ recommendations.
 
@@ -26,7 +26,7 @@ The system merges multiple users’ preferences to create a seamless and social 
 
 ## ✨ What It Does
 
-Unifi allows users to connect in shared music rooms where each participant’s favorite tracks and listening data contribute to a unified playlist.  
+unifi allows users to connect in shared music rooms where each participant’s favorite tracks and listening data contribute to a unified playlist.  
 
 When new users join, the playlist dynamically adjusts to include their preferences. Users can update the playlist by interacting through text or voice to request songs, set moods, or influence the overall direction of the mix.
 
@@ -34,7 +34,7 @@ When new users join, the playlist dynamically adjusts to include their preferenc
 
 ## 🧩 How We Built It
 
-Unifi is built with **Next.js** and **React** for a modern, performant frontend and API layer.  
+unifi is built with **Next.js** and **React** for a modern, performant frontend and API layer.  
 The backend uses **MongoDB** (hosted on **Railway**) for persistent data storage, while the app is deployed on **Vercel** for seamless global delivery.  
 
 We integrated the **Spotify Web API** for real-time playback and playlist management.  
@@ -56,7 +56,7 @@ MongoDB, Railway, Vercel
 
 ---
 
-## 🏃‍♂️ What's Next for Unifi
+## 🏃‍♂️ What's Next for unifi
 
 - Implement **WebSocket-based real-time synchronization** for playback, playlist updates, and live interactions.  
 - Introduce **individual music rooms** with unique access codes for private or group sessions.  
