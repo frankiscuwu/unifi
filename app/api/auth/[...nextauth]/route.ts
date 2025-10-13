@@ -51,6 +51,7 @@ export const authOptions: AuthOptions = {
                     "app-remote-control", // ✅ optional but useful
                     "user-top-read", // ✅ access user's top artists and tracks
                     "user-library-read", // ✅ access user's saved tracks and albums (optional but useful)
+                    "user-follow-read"
                 ].join("%20"),
         }),
     ],
