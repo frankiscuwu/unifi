@@ -1,6 +1,6 @@
-# Unifi
+# unifi
 
-<p align="center">
+<p align="left">
   <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
   <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
   <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
@@ -14,23 +14,25 @@
 </p>
 
 ---
+![alt text](https://github.com/frankiscuwu/unifi/blob/main/public/unifi.png?raw=true)
 
-## Overview
+## 🚀 Overview
 
-**Unifi** is a collaborative web platform that enables users to listen to music together while automatically curating a shared playlist that reflects everyone’s unique tastes.  
-The system intelligently merges multiple users’ preferences, creating a seamless and social group listening experience powered by real-time updates and AI-driven recommendations.
+**Unifi** is a collaborative music platform that enables users to listen to music together, dynamically curating a shared Spotify playlist that best reflects everyone’s unique tastes. 
+
+The system merges multiple users’ preferences to create a seamless and social group listening experience powered by real-time updates and AI-DJ recommendations.
 
 ---
 
-## What It Does
+## ✨ What It Does
 
 Unifi allows users to connect in shared music rooms where each participant’s favorite tracks and listening data contribute to a unified playlist.  
-When new users join, the playlist dynamically adjusts to include their preferences.  
-Users can interact through text or voice to request songs, set moods, or influence the overall direction of the mix — ensuring everyone hears music they love while discovering new sounds introduced by others in the room.
+
+When new users join, the playlist dynamically adjusts to include their preferences. Users can update the playlist by interacting through text or voice to request songs, set moods, or influence the overall direction of the mix.
 
 ---
 
-## How We Built It
+## 🧩 How We Built It
 
 Unifi is built with **Next.js** and **React** for a modern, performant frontend and API layer.  
 The backend uses **MongoDB** (hosted on **Railway**) for persistent data storage, while the app is deployed on **Vercel** for seamless global delivery.  
@@ -40,7 +42,21 @@ AI-driven personalization and natural language understanding are powered by **Go
 
 ---
 
-## What's Next for Unifi
+## 🔧 Tech Stack
+
+
+**Languages & Frameworks**  
+TypeScript, JavaScript, React, Next.js  
+
+**APIs & AI Services**  
+Spotify Web API, Google Gemini, ElevenLabs  
+
+**Database & Hosting**  
+MongoDB, Railway, Vercel
+
+---
+
+## 🏃‍♂️ What's Next for Unifi
 
 - Implement **WebSocket-based real-time synchronization** for playback, playlist updates, and live interactions.  
 - Introduce **individual music rooms** with unique access codes for private or group sessions.  
@@ -48,14 +64,5 @@ AI-driven personalization and natural language understanding are powered by **Go
 
 ---
 
-## Tech Stack
 
-**Languages & Frameworks:**  
-JavaScript, TypeScript, React, Next.js  
-
-**APIs & AI Services:**  
-Spotify Web API, Google Gemini, ElevenLabs  
-
-**Database & Hosting:**  
-MongoDB, Railway, Vercel  
 
